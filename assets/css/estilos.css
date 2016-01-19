@@ -1,0 +1,161 @@
+th{
+	text-align: center;
+}
+
+.list-articulos{
+	color:#000;
+	text-align: center;
+}
+
+.tabla {
+	margin: auto;
+	display: table;
+}
+.fila {
+	display: table-row;
+}
+.celda {
+	display: table-cell;
+}
+
+.resaltar:hover{
+	background-color: #666;
+	color: white;
+}
+
+.ocultar{
+	display: none;
+}
+
+.chkbox{
+	margin-right: 4% !important;
+}
+
+.cantidad{
+	text-align: right;
+	width: 30%;
+}
+
+.cantidad_texto{
+	text-align: right;
+}
+
+.texto{
+	text-align: left;
+}
+
+.cabecera_salida{
+	text-align: left;
+}
+
+.ocultar{
+	display: none;
+}
+
+.centrar{
+	text-align: center;
+	padding-top: 3%;
+}
+
+.buscador{
+	padding-top: 1%;
+	float: right;
+}
+
+.buscador_conteo{
+	clear: both;
+	width: %;
+
+}
+
+.btn-editar{
+	float: right;
+	margin-right: 3%;
+}
+
+.to_pdf{
+	
+	float: right;
+}
+
+.texto_tablas{
+	font-size: 12px;
+}
+
+.imagen{
+	width: 10%;
+}
+
+.printer{
+	margin-right: 2%;
+	margin-left: 30px;
+	margin-bottom: 1%;
+}
+
+.printer2{
+	margin-right: 2%;
+	margin-left: 55%;
+	margin-bottom: 1%;
+}
+
+.icono{
+	background: url("../images/lupa.png") no-repeat 0 0 transparent;
+	background-size: 17px 17px;
+	padding-left: 22px;
+}
+
+.input{
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	border-bottom: solid 1px;
+	width: 76%;
+}
+
+.alinear_vertical{
+	margin-top: 10%;
+}
+
+.alinear_vertical2{
+	margin-top: 5%;
+}
+
+.bg-america{
+	background-color: #D8D8D8;
+}
+
+.ventana_modal {
+	height: 300px;
+	overflow: scroll;
+}
+
+.etiqueta{
+	font-size: 16px;
+}
+
+a{
+	color: #000;
+}
+
+.caja{
+	width: 700px;
+}
+.caja_usr{
+	width: 550px;
+}
+
+.para_check{
+	padding-top: 10%;
+}
+
+.para_check_new{
+	padding-top: 3%;
+}
+
+.boton_crear{
+	margin-top: 10%;	
+}
+
+.uppercase{
+	text-transform: uppercase;
+}
