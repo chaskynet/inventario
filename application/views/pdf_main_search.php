@@ -10,14 +10,15 @@
 	<small>Fecha: <?= $fecha; ?></small><br>
 </div>
 <div class="panel panel-default">
-	<table class="table table-condensed texto_tablas">
+	<table class="table table-condensed table-bordered texto_tablas">
 	<thead>
 		<tr>
 			<th>Codigo</th>
+			<th>Almacen</th>
 			<th>Descripcion</th>
 			<th>Procedencia</th>
 			<th>Unidad</th>
-			<th>Empaque</th>
+			<!-- <th>Empaque</th> -->
 			<th>Saldo</th>
 		</tr>
 	</thead>
@@ -27,12 +28,13 @@
 		
 	?>
 	<tr>
-		<td><?= $key->cod_articulo; ?></td>
+		<td class="centrar_texto"><?= $key->cod_articulo; ?></td>
+		<td class="centrar_texto"><?= $key->cod_almacen; ?></td>
 		<td><?= $key->descripcion; ?></td>
-		<td class="centrar"><?= $key->procedencia; ?></td>
-		<td class="centrar"><?= $key->unidad; ?></td>
-		<td class="centrar"><?= $key->empaque; ?></td>
-		<td class="cantidad_texto"><?= number_format($key->saldo,0,".", ","); ?></td>
+		<td class="centrar_texto"><?= $key->procedencia; ?></td>
+		<td class="centrar_texto"><?= $key->unidad; ?></td>
+		<!-- <td class="centrar"><?= $key->empaque; ?></td> -->
+		<td class="cantidad_texto"><?= ($key->saldo == 0 ? '-': number_format($key->saldo,0,".",",")); ?></td>
 	</tr>
 	<?php } ?>
 	</tbody>

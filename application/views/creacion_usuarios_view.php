@@ -10,15 +10,36 @@
 	      <div class="modal-body well" id="modal_content_usuario">
 	      		<input type="hidden" id="id_usuario">
 	      		<div class="row">
-					<div class="form-group col-xs-5">
+					<div class="col-xs-4">
 						<label for="usuario">Usuario:
 							<input type="text" id="ed_usuario" class="form-control col-lg-1">
 						</label>
 						<label for="nombre">Nombre:
 							<input type="text" id="ed_nombre" class="form-control col-lg-1">
 						</label>
+
+						<label for="ed_apaterno">Apellido Paterno: 
+							<input type="text" id="ed_apaterno" class="form-control col-lg-1">
+						</label>
+						<label for="amaterno">Apellido Materno: 
+							<input type="text" id="ed_amaterno" class="form-control col-lg-1">
+						</label>	
+						<label for="ci">C.I.: 
+							<input type="text" id="ed_ci" class="form-control">
+						</label>
+
+						<label for="password">Password: 
+							<input type="checkbox" id="chk_password">
+							<input type="password" id="ed_password" class="form-control" disabled>
+						</label>
+					<!-- -->
+
 					</div>
-					<div class="form-group col-xs-5">
+				<!-- </div> -->
+
+				<!-- <div class="row"> -->
+					
+					<div class="form-group col-xs-4">
 						<div class="input-group para_check">
 					      <span class="input-group-addon">
 					        <input type="checkbox" aria-label="..." id="chk_inv_ini" name="chk_permisos[]">
@@ -40,19 +61,6 @@
 					      <input type="text" class="form-control" aria-label="..." value="Ingreso de Productos" disabled>
 					    </div>
 
-					</div>
-				</div>
-
-				<div class="row">
-					<div class="form-group col-xs-5">
-						<label for="ed_apaterno">Apellido Paterno: 
-							<input type="text" id="ed_apaterno" class="form-control col-lg-1">
-						</label>
-						<label for="amaterno">Apellido Materno: 
-							<input type="text" id="ed_amaterno" class="form-control col-lg-1">
-						</label>	
-					</div>
-					<div class="form-group col-xs-5">
 						<div class="input-group para_check">
 					      <span class="input-group-addon">
 					        <input type="checkbox" aria-label="..." id="chk_nota_salida" name="chk_permisos[]">
@@ -75,18 +83,7 @@
 					    </div>
 					    
 					</div>
-				</div>
-
-				<div class="row">
-					<div class="form-group col-xs-5">
-						<label for="ci">C.I.: 
-							<input type="text" id="ed_ci" class="form-control">
-						</label>
-						<!-- <label for="password">Password: 
-							<input type="password" id="ed_password" class="form-control">
-						</label> -->
-					</div>
-					<div class="form-group col-xs-5">
+					<div class="form-group col-xs-4">
 						<div class="input-group para_check">
 					      <span class="input-group-addon">
 					        <input type="checkbox" aria-label="..." id="chk_mov_inventa" name="chk_permisos[]">
@@ -108,15 +105,33 @@
 					      <input type="text" class="form-control" aria-label="..." value="Configuraciones" disabled>
 					    </div>
 					    
+						<div class="input-group para_check">
+					      <span class="input-group-addon">
+					        <input type="checkbox" aria-label="..." id="chk_crea_art">
+					      </span>
+					      <input type="text" class="form-control" aria-label="..." value="Creacion articulo" disabled>
+					    </div>
+
+						<div class="input-group para_check">
+					      <span class="input-group-addon">
+					        <input type="checkbox" aria-label="..." id="chk_borra_art">
+					      </span>
+					      <input type="text" class="form-control" aria-label="..." value="Borra articulo" disabled>
+					    </div>
+
+					    <div class="input-group para_check">
+					      <span class="input-group-addon">
+					        <input type="checkbox" aria-label="..." id="chk_importa_art">
+					      </span>
+					      <input type="text" class="form-control" aria-label="..." value="Importa articulo de xls" disabled>
+					    </div>
 					</div>
+				<!-- </div>
+
+				<div class="row"> -->
+
 				</div>
 
-				<!-- <div class="row">
-				<div class="form-group col-xs-3">
-					<input type="radio" name="ed_rol" value="0"/> Administrador
-					<input type="radio" name="ed_rol" value="1"/> Usuario
-				</div>
-				</div> -->
 				<input type="submit" value="Actualizar Usuario" id="actualizar_usuario" class="btn btn-primary">
 	      </div>
 	      
@@ -131,7 +146,7 @@
 <!-- ***************************************** -->
 <!-- Ventana Modal de Creacion de nuevos Usuarios-->
 <div id="modal_creacion_usuarios" class="modal fade" role="dialog">
-  <div class="modal-dialog">
+  <div class="modal-dialog caja_usr">
     <!-- Modal content-->
     
     <div class="modal-content">
@@ -142,7 +157,7 @@
       <div class="modal-body well" id="modal_content_resumen">
        		<?php echo form_open('');?>
        			<div class="row">
-       				<div class="col-xs-5">
+       				<div class="col-xs-4">
 						<div class="form-group"><?php echo validation_errors();?></div>
 						<div>
 							<label for="usuario">Usuario: </label>
@@ -177,7 +192,7 @@
 							<input type="submit" value="Crear Usuario" id="crear_usuario" class="btn btn-primary">
 						</div>
 					</div>
-					<div class="col-xs-5 para_check_new">
+					<div class="col-xs-4 para_check_new">
 						<div class="input-group para_check">
 					      <span class="input-group-addon">
 					        <input type="checkbox" aria-label="..." name="permiso[]" id="chk_inv_ini">
@@ -220,14 +235,16 @@
 					      <input type="text" class="form-control" aria-label="..." value="Lista Conteo Fisico" disabled>
 					    </div>
 
-					    <div class="input-group para_check">
+					</div>
+					<div class="form-group col-xs-4 para_check_new">
+						<div class="input-group para_check">
 					      <span class="input-group-addon">
 					        <input type="checkbox" aria-label="..." name="permiso[]" id="chk_mov_inventa">
 					      </span>
 					      <input type="text" class="form-control" aria-label="..." value="Mov. de Inventario" disabled>
 					    </div>
 
-					    <div class="input-group para_check">
+						<div class="input-group para_check">
 					      <span class="input-group-addon">
 					        <input type="checkbox" aria-label="..." name="permiso[]" id="chk_modifica">
 					      </span>
@@ -239,6 +256,25 @@
 					        <input type="checkbox" aria-label="..." name="permiso[]" id="chk_config">
 					      </span>
 					      <input type="text" class="form-control" aria-label="..." value="Configuraciones" disabled>
+					    </div>
+
+						<div class="input-group para_check">
+					      <span class="input-group-addon">
+					        <input type="checkbox" name="permiso" aria-label="..." id="chk_crea_art">
+					      </span>
+					      <input type="text" class="form-control" aria-label="..." value="Creacion articulo" disabled>
+					    </div>
+					    <div class="input-group para_check">
+					      <span class="input-group-addon">
+					        <input type="checkbox" name="permiso" aria-label="..." id="chk_borra_art">
+					      </span>
+					      <input type="text" class="form-control" aria-label="..." value="Borra articulo" disabled>
+					    </div>
+					    <div class="input-group para_check">
+					      <span class="input-group-addon">
+					        <input type="checkbox" name="permiso" aria-label="..." id="chk_importa_art">
+					      </span>
+					      <input type="text" class="form-control" aria-label="..." value="Importa articulo de xls" disabled>
 					    </div>
 					</div>
 				</div>
@@ -259,6 +295,7 @@
 		<table class="table table-bordered table-striped table-hover table-condensed">
 			<tr>
 				<th>#</th>
+				
 				<th>Usuario</th>
 				<th>Nombre Completo</th>
 				<th>C.I.</th>
@@ -271,7 +308,8 @@
 					$i++;
 			?>
 			<tr id="<?= $key->id_usuario; ?>">
-				<td><?= $i; ?></td>
+				<td><?= $i; ?>&nbsp;<img id="elimina_usr" alt="" src="../assets/images/trash.png"></td>
+
 				<td><?= $key->uname; ?></td>
 				<td><a href="#" data-toggle="modal" data-target="#modal_edita_usuario" id="nombre_usuario"><?= $key->nombre.' '.$key->apaterno.' '.$key->amaterno; ?></a></td>
 				<td class="centrar"><?= $key->ci; ?></td>

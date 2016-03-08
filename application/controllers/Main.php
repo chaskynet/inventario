@@ -29,9 +29,9 @@ class Main extends CI_Controller
 		if ($this->session->userdata('is_logged_in')){
 			$this->load->view('main_view');
 		} else{
-			$this->load->model('Almacenes_model');
-			$lista_almacenes['almacenes'] = $this->Almacenes_model->lista_almacenes();
-			$this->load->view('login_view', $lista_almacenes);
+			// $this->load->model('Almacenes_model');
+			// $lista_almacenes['almacenes'] = $this->Almacenes_model->lista_almacenes();
+			$this->load->view('login_view');
 		}
 	}
 
@@ -54,7 +54,6 @@ class Main extends CI_Controller
 		
 		$this->form_validation->set_rules('usuario', 'Usuario', 'required|trim|callback_validar_credenciales');
 		$this->form_validation->set_rules('password', 'Password', 'required|trim');
-		$this->form_validation->set_rules('almacen', 'Almacen', 'required');
 
 		if($this->form_validation->run()){
 			$this->load->model('Usuarios_model');
@@ -62,17 +61,14 @@ class Main extends CI_Controller
 			$permisos = $this->Usuarios_model->permisos($this->input->post('usuario'), $this->input->post('password'));
 			$almacen = $this->Almacenes_model->almacen($this->input->post('almacen'));
 			$data = array('usuario' => $this->input->post('usuario'),
-					'abreviacion' => $this->input->post('almacen'),
-					'almacen' => $almacen,
 					'permisos' => $permisos, //json_encode($permisos),
 					'is_logged_in' => 1
 					);
 			$this->session->set_userdata($data);
 			redirect('main/principal');
 		} else{
-			$this->load->model('Almacenes_model');
-			$lista_almacenes['almacenes'] = $this->Almacenes_model->lista_almacenes();
-			$this->load->view('login_view', $lista_almacenes);
+			
+			$this->load->view('login_view');
 		}
 	}
 
@@ -199,6 +195,17 @@ class Main extends CI_Controller
 			redirect('main/restringido');
 		}
 	}
+
+	public function elimina_usuario(){
+		if ($this->session->userdata('is_logged_in')){
+			$this->load->model('Usuarios_model');
+
+			$elimina_usuario = $this->Usuarios_model->elimina_usuario($_POST['data']);
+			echo $elimina_usuario;
+		} else{
+			redirect('main/restringido');
+		}
+	}
 	//********************************************
 
 	/**
@@ -228,7 +235,7 @@ class Main extends CI_Controller
 	*/
 	public function guarda_nota_salida(){
 		if ($this->session->userdata('is_logged_in')){
-			$guarda_nota_salida = $this->Articulos_model->guarda_nota_salida($_POST['data']);
+			$guarda_nota_salida = $this->Articulos_model->guarda_nota_salida($_POST['data'], $_POST['modo_edicion']);
 			echo $guarda_nota_salida;
 		} else{
 			redirect('main/restringido');
@@ -268,8 +275,21 @@ class Main extends CI_Controller
 	*/
 	public function guarda_nota_entrada(){
 		if ($this->session->userdata('is_logged_in')){
-			$guarda_nota_salida = $this->Articulos_model->guarda_nota_entrada($_POST['data']);
+			$guarda_nota_salida = $this->Articulos_model->guarda_nota_entrada($_POST['data'], $_POST['modo_edicion']);
 			echo $guarda_nota_salida;
+		} else{
+			redirect('main/restringido');
+		}
+	}
+
+	/**
+	* Elimina articulo en Entradas y Salias actualiza las cantidades en Inventarios
+	*
+	*/
+	public function eliminina_art_editada(){
+		if ($this->session->userdata('is_logged_in')){
+			$eliminina_art_editada = $this->Articulos_model->eliminina_art_editada($_POST['data']);
+			echo $eliminina_art_editada;
 		} else{
 			redirect('main/restringido');
 		}
@@ -281,16 +301,17 @@ class Main extends CI_Controller
 	*/
 	public function to_pdf_nota_salida(){
 		if ($this->session->userdata('is_logged_in')){
-			$this->load->library('MPDF53/mpdf');
+			$this->load->library('MPDF53/Mpdf');
 			ob_clean();
-			$html = '<p>test de pdf</p>';
 			$mpdf = new mPDF('utf-8', 'Letter');
 			$data['num_nota_salida'] = $this->input->post('h_nota_salida');
 			$data['usuario'] = $this->session->userdata('usuario');
-			$data['fecha'] = date('Y/m/d');
+			$data['fecha'] = date('d/m/Y');
 			$data['datos_nota_salida'] = $this->Articulos_model->trae_nota_salida($this->input->post('h_nota_salida'));
+			//
+			$mpdf->setFooter('{PAGENO}');
+			//
 			$mpdf->WriteHTML($this->load->view('pdf_notas_salida', $data, true));
-			//$mpdf->WriteHTML($html);
 			$mpdf->Output();
 
 		} else{
@@ -304,12 +325,15 @@ class Main extends CI_Controller
 	*/
 	public function to_pdf_nota_entrada($id_nota){
 		if ($this->session->userdata('is_logged_in')){
-			$this->load->library('MPDF53/mpdf');
+			$this->load->library('MPDF53/Mpdf');
 			$mpdf = new mPDF('utf-8', 'Letter');
 			$data['num_nota_entrada'] = $this->input->post('h_nota_entrada');
 			$data['usuario'] = $this->session->userdata('usuario');
-			$data['fecha'] = date('Y/m/d');
+			$data['fecha'] = date('d/m/Y');
 			$data['datos_nota_entrada'] = $this->Articulos_model->trae_nota_entrada($this->input->post('h_nota_entrada'));
+			//
+			$mpdf->setFooter('{PAGENO}');
+			//
 			$mpdf->WriteHTML($this->load->view('pdf_notas_entrada', $data, true));
 			ob_clean();
 			$mpdf->Output();
@@ -323,13 +347,16 @@ class Main extends CI_Controller
 	*
 	*
 	*/
-	public function to_pdf_main_search($search){
+	public function to_pdf_main_search(){
 		if ($this->session->userdata('is_logged_in')){
-			$this->load->library('MPDF53/mpdf');
+			$this->load->library('MPDF53/Mpdf');
 			$mpdf = new mPDF('utf-8', 'Letter');
 			$data['usuario'] = $this->session->userdata('usuario');
-			$data['fecha'] = date('Y/m/d');
+			$data['fecha'] = date('d/m/Y');
 			$data['datos_main_search'] = $this->Articulos_model->busca_articulo($this->input->post('buscar'));
+			//
+			$mpdf->setFooter('{PAGENO}');
+			//
 			$mpdf->WriteHTML($this->load->view('pdf_main_search', $data, true));
 			ob_clean();
 			$mpdf->Output();
@@ -343,13 +370,17 @@ class Main extends CI_Controller
 	*
 	*
 	*/
-	public function to_pdf_search_invini($search){
+	public function to_pdf_search_invini(){
 		if ($this->session->userdata('is_logged_in')){
-			$this->load->library('MPDF53/mpdf');
+			$this->load->library('MPDF53/Mpdf');
 			$mpdf = new mPDF('utf-8', 'Letter');
+
 			$data['usuario'] = $this->session->userdata('usuario');
-			$data['fecha'] = date('Y/m/d');
+			$data['fecha'] = date('d/m/Y');
 			$data['datos_main_search'] = $this->Articulos_model->busca_articulo($this->input->post('buscar_invini'));
+			//
+			$mpdf->setHeader('{PAGENO}');
+			//
 			$mpdf->WriteHTML($this->load->view('pdf_search_invini', $data, true));
 			ob_clean();
 			$mpdf->Output();
@@ -363,13 +394,16 @@ class Main extends CI_Controller
 	*
 	*
 	*/
-	public function to_pdf_search_conteo($search){
+	public function to_pdf_search_conteo(){
 		if ($this->session->userdata('is_logged_in')){
-			$this->load->library('MPDF53/mpdf');
+			$this->load->library('MPDF53/Mpdf');
 			$mpdf = new mPDF('utf-8', 'Letter');
 			$data['usuario'] = $this->session->userdata('usuario');
-			$data['fecha'] = date('Y/m/d');
+			$data['fecha'] = date('d/m/Y');
 			$data['datos_main_search'] = $this->Articulos_model->busca_articulo($this->input->post('buscar_para_conteo'));
+			//
+			$mpdf->setFooter('{PAGENO}');
+			//
 			$mpdf->WriteHTML($this->load->view('pdf_search_conteo', $data, true));
 			ob_clean();
 			$mpdf->Output();
@@ -383,13 +417,16 @@ class Main extends CI_Controller
 	*
 	*
 	*/
-	public function to_pdf_search_movimiento($search){
+	public function to_pdf_search_movimiento(){
 		if ($this->session->userdata('is_logged_in')){
-			$this->load->library('MPDF53/mpdf');
+			$this->load->library('MPDF53/Mpdf');
 			$mpdf = new mPDF('utf-8', 'Letter');
 			$data['usuario'] = $this->session->userdata('usuario');
-			$data['fecha'] = date('Y/m/d');
+			$data['fecha'] = date('d/m/Y');
 			$data['datos_main_search'] = $this->Articulos_model->busca_articulo_movimiento($this->input->post('buscar_para_movimiento'));
+			//
+			$mpdf->setFooter('{PAGENO}');
+			//
 			$mpdf->WriteHTML($this->load->view('pdf_search_movimiento', $data, true));
 			ob_clean();
 			$mpdf->Output();
@@ -405,12 +442,15 @@ class Main extends CI_Controller
 	*/
 	public function to_pdf_kardex(){
 		if ($this->session->userdata('is_logged_in')){
-			$this->load->library('MPDF53/mpdf');
+			$this->load->library('MPDF53/Mpdf');
 			$mpdf = new mPDF('utf-8', 'Letter');
 			$data['usuario'] = $this->session->userdata('usuario');
 			$data['fecha'] = date('d/m/Y');
 			$data['data_articulo'] = $this->Articulos_model->kardex_articulo_desc($this->input->post('buscar_para_kardex'));
 			$data['datos_main_search'] = $this->Articulos_model->kardex_articulo($this->input->post('buscar_para_kardex'));
+			//
+			//$mpdf->setFooter('{PAGENO}');
+			//
 			$mpdf->WriteHTML($this->load->view('pdf_kardex', $data, true));
 			ob_clean();
 			$mpdf->Output();
@@ -430,7 +470,7 @@ class Main extends CI_Controller
 
 		$config['upload_path']          = './assets/files/uploads/';
         $config['allowed_types']        = 'xls|xlsx';
-        $config['max_size']             = 100;
+        $config['max_size']             = 150;
         $config['max_width']            = 1024;
         $config['max_height']           = 768;
         $config['remove_spaces']		= TRUE;
@@ -529,10 +569,28 @@ class Main extends CI_Controller
 		}
 	}
 
+	public function cuadra_inventario(){
+		if ($this->session->userdata('is_logged_in')){
+			$cuadra_inventario = $this->Articulos_model->cuadra_inventario();
+			echo $cuadra_inventario;
+		} else{
+			redirect('main/restringido');
+		}
+	}
+
 	public function crear_articulo(){
 		if ($this->session->userdata('is_logged_in')){
 			$nuevo_articulo = $this->Articulos_model->nuevo_articulo($_POST['data']);
 			echo $nuevo_articulo;
+		} else{
+			redirect('main/restringido');
+		}
+	}
+
+	public function elimina_articulo(){
+		if ($this->session->userdata('is_logged_in')){
+			$elimina_articulo = $this->Articulos_model->elimina_articulo($_POST['data']);
+			echo $elimina_articulo;
 		} else{
 			redirect('main/restringido');
 		}
@@ -658,7 +716,8 @@ class Main extends CI_Controller
 	**/
 	public function existencias(){
 		if ($this->session->userdata('is_logged_in')){
-			$this->load->view('existencias_view');
+			$data['existencias'] = $this->Articulos_model->lista_inventario();
+			$this->load->view('existencias_view', $data);
 		} else{
 			redirect('main/restringido');
 		}

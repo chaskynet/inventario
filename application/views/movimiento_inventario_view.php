@@ -2,24 +2,23 @@
 <div id="modal_kardex_articulos" class="modal fade" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header" style="height: 90px;">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
         <div style="float: left;">
         	<h4 class="modal-title">Kardex de Articulos</h4>
+        	Descripcion:
+        	<label id="descripcion"></label>
+        	<br>
+        	Inv. Inicial:
+        	<label id="invini"></label>
         </div>
-    	<div>
-	    	<form id="frm_pdf_kardex" name="frm_pdf_kardex" action="to_pdf_kardex" target="_blank" method="post">
-							
-				<input type="hidden" id="buscar_para_kardex" name="buscar_para_kardex">
-				<img src="../assets/images/printer2.png" alt="Imprimir" id="imprimir-kardex" class="printer2">
-				
-			</form>
-		</div>
+        
+    	
       </div>
       <div class="modal-body" id="modal_content_busqueda">
       	
-        <table class="table" id="kardex_articulos">
-			<thead class="bg-info">
+        <table class="table cabecera" id="kardex_articulos">
+			<thead>
 			<tr>
 				<th>Fecha</th>
 				<th>Mov.</th>
@@ -35,6 +34,14 @@
 		</table>
       </div>
       <div class="modal-footer">
+      	<div style="width: 25%;float:left;">
+	    	<form id="frm_pdf_kardex" name="frm_pdf_kardex" action="to_pdf_kardex" target="_blank" method="post">
+							
+				<input type="hidden" id="buscar_para_kardex" name="buscar_para_kardex">
+				<img src="../assets/images/printer2.png" alt="Imprimir" id="imprimir-kardex" class="printer2">
+				
+			</form>
+		</div>
         <button type="button" class="btn btn-default" data-dismiss="modal" >Cerrar</button>
       </div>
     </div>
@@ -51,6 +58,7 @@
 		<div style="float:left;">
 			<h3>MOVIMIENTO DE INVENTARIOS</h3>
 		</div>
+			
 			<div style="float:right; margin-top: 2%; WIDTH: 25%; margin-right: 5%;">
 			
 				<form id="frm_pdf_main_search_movimiento" name="frm_pdf_main_search_movimiento" action="to_pdf_search_movimiento" target="_blank" method="post">
@@ -62,14 +70,15 @@
 			</div>
 		</div>
 		
-		<table id="tabla_movimiento" class="table table-bordered table-striped table-hover table-condensed">
+		<table id="tabla_movimiento" class="table table-striped table-condensed cabecera resaltada">
 			<thead>
 			<tr>
 				<th>#</th>
-				<th>Codigo Articulo</th>
+				<th>Codigo</th>
+				<th>Almacen</th>
 				<th>Descripción</th>
 				<th>Unidad</th>
-				<th>Empaque</th>
+				<!-- <th>Empaque</th> -->
 				<th>Procedencia</th>
 				<th>Inv. Inicial</th>
 				<th>Entradas</th>
@@ -86,15 +95,16 @@
 			?>
 			<tr id="<?= $key->cod_articulo; ?>">
 				<td><?= $i; ?></td>
-				<td class="centrar"><?= $key->cod_articulo; ?></td>
+				<td class="centrar_texto"><?= $key->cod_articulo; ?></td>
+				<td class="centrar_texto"><?= $key->almacen; ?></td>
 				<td><a href="" id="kardex_articulo" data-toggle="modal" data-target="#modal_kardex_articulos"> <?= $key->descripcion; ?></a></td>
-				<td class="centrar"><?= $key->unidad; ?></td>
-				<td class="centrar"><?= $key->empaque; ?></td>
-				<td class="centrar"><?= $key->procedencia; ?></td>
-				<td class="cantidad_texto"><?= number_format($key->inv_inicial,0,".",","); ?></td>
-				<td class="cantidad_texto"><?= number_format($key->entradas,0,".",","); ?></td>
-				<td class="cantidad_texto"><?= number_format($key->salidas,0,".",","); ?></td>
-				<td class="cantidad_texto"><?= number_format($key->saldo,0,".",","); ?></td>
+				<td class="centrar_texto"><?= $key->unidad; ?></td>
+				<!-- <td class="centrar_texto"><?= $key->empaque; ?></td> -->
+				<td class="centrar_texto"><?= $key->procedencia; ?></td>
+				<td class="cantidad_texto"><?= ($key->inv_inicial == 0 ? '-':number_format($key->inv_inicial,0,".",",")); ?></td>
+				<td class="cantidad_texto"><?= ($key->entradas == 0 ? '-':number_format($key->entradas,0,".",",")); ?></td>
+				<td class="cantidad_texto"><?= ($key->salidas == 0 ? '-': number_format($key->salidas,0,".",",")); ?></td>
+				<td class="cantidad_texto"><?= ($key->saldo == 0 ? '-':number_format($key->saldo,0,".",",")); ?></td>
 			</tr>
 			<?php
 				}

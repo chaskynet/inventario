@@ -12,14 +12,14 @@
 	<small>Fecha: <?= $fecha; ?></small><br>
 </div>
 <div class="panel panel-default">
-	<table class="table table-condensed texto_tablas">
+	<table class="table table-condensed table-bordered texto_tablas">
 		<thead>
 			<tr>
 				<th>Codigo</th>
 				<th>Descripcion</th>
 				<th>Procedencia</th>
 				<th>Unidad</th>
-				<th>Empaque</th>
+				<!-- <th>Empaque</th> -->
 				<th>Cantidad</th>
 			</tr>
 		</thead>
@@ -29,11 +29,11 @@
 			
 		?>
 		<tr>
-			<td><?= $key->cod_articulo; ?></td>
+			<td class="centrar_texto"><?= $key->cod_articulo; ?></td>
 			<td><?= $key->descripcion; ?></td>
-			<td><?= $key->procedencia; ?></td>
-			<td><?= $key->unidad; ?></td>
-			<td><?= $key->empaque; ?></td>
+			<td class="centrar_texto"><?= $key->procedencia; ?></td>
+			<td class="centrar_texto"><?= $key->unidad; ?></td>
+			<!-- <td><?= $key->empaque; ?></td> -->
 			<td class="cantidad_texto"><?= number_format($key->cantidad,0,".", ","); ?></td>
 		</tr>
 		<?php } ?>

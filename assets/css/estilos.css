@@ -2,10 +2,31 @@ th{
 	text-align: center;
 }
 
+.logo{
+	
+	width: 70%;
+}
+
 .list-articulos{
 	color:#000;
 	text-align: center;
 }
+
+.modal
+{
+    overflow: hidden;
+}
+
+
+
+/*  */
+.tabla-fija thead { display:block; margin:0px; cell-spacing:0px; left:0px; }
+.tabla-fija tbody { display:block; overflow:auto; height:450px; }
+.tabla-fija tr {display: block;}
+/*.tabla-fija th { height:50px;  }*/
+.tabla-fija td { margin:0px; cell-spacing:0px;}
+
+/* */
 
 .tabla {
 	margin: auto;
@@ -48,6 +69,10 @@ th{
 	text-align: left;
 }
 
+.color_botones{
+	background-color: #74767F;
+}
+
 .ocultar{
 	display: none;
 }
@@ -55,6 +80,11 @@ th{
 .centrar{
 	text-align: center;
 	padding-top: 3%;
+}
+
+.centrar_texto{
+	text-align: center;
+	padding-top: 5px;
 }
 
 .buscador{
@@ -78,8 +108,21 @@ th{
 	float: right;
 }
 
+.flotar-izquierda{
+	float: left;
+}
+
 .texto_tablas{
-	font-size: 12px;
+	font-size: 11px;
+}
+
+.table tbody tr:hover{
+	background-color: #F5F6CE;
+}
+
+.cabecera thead{
+	background-color: #6e6e6e;
+	color: white;
 }
 
 .imagen{
@@ -93,9 +136,9 @@ th{
 }
 
 .printer2{
-	margin-right: 2%;
-	margin-left: 55%;
-	margin-bottom: 1%;
+	float: left;
+	margin-left: 5%;
+	width: 25%;
 }
 
 .icono{
@@ -138,10 +181,11 @@ a{
 }
 
 .caja{
-	width: 700px;
+	width: 800px;
+	font-size: 14px;
 }
 .caja_usr{
-	width: 550px;
+	width: 750px;
 }
 
 .para_check{

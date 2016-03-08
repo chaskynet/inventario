@@ -15,9 +15,17 @@
 				<input type="text" id="ed_nombre_almacen">
 			</div>
 			<div class="form-group">
-				<label for="nombre">abreviacion: </label>
+				<label for="nombre">Abreviacion: </label>
 				<input type="hidden" id="ed_abreviacion_old">
 				<input type="text" id="ed_abreviacion">
+			</div>
+			<div class="form-group">
+				<label for="direccion">Dirección Almacen: </label>
+				<input type="text" id="ed_direccion">
+			</div>
+			<div class="form-group">
+				<label for="telefono">Telefono Almacen: </label>
+				<input type="text" id="ed_telefono">
 			</div>
 			
 			<input type="submit" value="Actualizar Almacen" id="actualizar_almacen" class="btn btn-primary">
@@ -49,8 +57,16 @@
 					<input type="text" id="nombre_almacen">
 				</div>
 				<div class="form-group">
-					<label for="nombre">abreviacion: </label>
+					<label for="nombre">Abreviacion: </label>
 					<input type="text" id="abreviacion">
+				</div>
+				<div class="form-group">
+					<label for="direccion">Dirección Almacen: </label>
+					<input type="text" id="direccion">
+				</div>
+				<div class="form-group">
+					<label for="telefono">Telefono Almacen: </label>
+					<input type="text" id="telefono">
 				</div>
 				<input type="submit" value="Crear Almacen" id="crear_almacen" class="btn btn-primary">
 			<?php echo form_close(); ?>
@@ -74,6 +90,8 @@
 				<th>#</th>
 				<th>Nombre Almacen</th>
 				<th>Abreviacion</th>
+				<th>Dirección</th>
+				<th>Telefono</th>
 				<th>Fecha Creacion</th>
 			</tr>
 			<?php
@@ -85,6 +103,8 @@
 				<td><?= $i; ?></td>
 				<td><a href="#" data-toggle="modal" data-target="#modal_edita_almacen" id="nombre_almacen"><?= $key->nombre_almacen; ?></a></td>
 				<td class="centrar"><?= $key->abreviacion; ?></td>
+				<td class="centrar"><?= $key->direccion; ?></td>
+				<td class="centrar"><?= $key->fono; ?></td>
 				<td class="centrar"><?= $key->fecha; ?></td>
 			</tr>
 			<?php

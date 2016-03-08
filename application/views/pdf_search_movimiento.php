@@ -10,38 +10,41 @@
 	<small>Fecha: <?= $fecha; ?></small><br>
 </div>
 <div class="panel panel-default">
-	<table class="table table-condensed texto_tablas">
+	<table class="table table-condensed table-bordered texto_tablas">
 	<thead>
 		<tr>
 			<th>#</th>
-			<th>Codigo Articulo</th>
+			<th>Codigo</th>
+			<th>Almacen</th>
 			<th>Descripción</th>
 			<th>Unidad</th>
-			<th>Empaque</th>
+			
 			<th>Procedencia</th>
 			<th>Inv. Inicial</th>
-			<th>Entradas</th>
-			<th>Salidas</th>
+			<th>E.</th>
+			<th>S.</th>
 			<th>Saldo</th>
 		</tr>
 	</thead>
 	<tbody>
 	<?php
+		$i = 1;
 		foreach ($datos_main_search as $key) {
-		
 	?>
 	<tr>
-		<td><?= $key->cod_articulo; ?></td>
+		<td><?=$i;?></td>
+		<td class="centrar_texto"><?= $key->cod_articulo; ?></td>
+		<td class="centrar_texto"><?= $key->almacen; ?></td>
 		<td><?= $key->descripcion; ?></td>
-		<td class="centrar"><?= $key->unidad; ?></td>
-		<td class="centrar"><?= $key->empaque; ?></td>
-		<td class="centrar"><?= $key->procedencia; ?></td>
-		<td class="cantidad_texto"><?= number_format($key->inv_inicial,0,".",","); ?></td>
-		<td class="cantidad_texto"><?= number_format($key->entradas,0,".",","); ?></td>
-		<td class="cantidad_texto"><?= number_format($key->salidas,0,".",","); ?></td>
+		<td><?= $key->unidad; ?></td>
+		
+		<td><?= $key->procedencia; ?></td>
+		<td class="cantidad_texto"><?= ($key->inv_inicial == 0 ? '-': number_format($key->inv_inicial,0,".",",")); ?></td>
+		<td class="cantidad_texto"><?= ($key->entradas == 0 ? '-': number_format($key->entradas,0,".",",")); ?></td>
+		<td class="cantidad_texto"><?= ($key->salidas == 0 ? '-': number_format($key->salidas,0,".",",")); ?></td>
 		<td class="cantidad_texto"><?= number_format($key->saldo,0,".",","); ?></td>
 		
 	</tr>
-	<?php } ?>
+	<?php $i++; } ?>
 	</tbody>
 </table>

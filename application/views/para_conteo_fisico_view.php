@@ -22,11 +22,12 @@
 					</div>
 				</div>
 		<!-- <div class="table-responsive"> -->
-		<table id="tabla_conteo" class="table table-bordered table-striped table-hover table-condensed">
+		<table id="tabla_conteo" class="table table-striped table-condensed cabecera resaltada">
 			<thead class="bg-info">
 			<tr>
 				<th>#</th>
-				<th>Codigo Articulo</th>
+				<th>Codigo</th>
+				<th>Almacen</th>
 				<th>Descripción</th>
 				<th>Unidad</th>
 				<th>Empaque</th>
@@ -45,17 +46,17 @@
 			?>
 			<tr id="<?= $key->id_articulo; ?>">
 				<td><?= $i; ?></td>
-				<td class="centrar"><?= $key->cod_articulo; ?></td>
-				
+				<td class="centrar_texto"><?= $key->cod_articulo; ?></td>
+				<td class="centrar_texto"><?= $key->cod_almacen; ?></td>
 				<td><?= $key->descripcion; ?></td>
 				
-				<td class="centrar"><?= $key->unidad; ?></td>
-				<td class="centrar"><?= $key->empaque; ?></td>
-				<td class="centrar"><?= $key->procedencia; ?></td>
+				<td class="centrar_texto"><?= $key->unidad; ?></td>
+				<td class="centrar_texto"><?= $key->empaque; ?></td>
+				<td class="centrar_texto"><?= $key->procedencia; ?></td>
 				<!-- <td><?= $key->fecha; ?></td> -->
 		
-				<td class="cantidad_texto"><?= number_format($key->saldo,0,".",","); ?></td>
-				 <td class="centrar">_______</td>
+				<td class="cantidad_texto"><?= ($key->saldo == 0 ? '-' : number_format($key->saldo,0,".",",")); ?></td>
+				 <td class="centrar_texto">_______</td>
 			</tr>
 			<?php
 				}

@@ -55,7 +55,12 @@ class Usuarios_model extends CI_Model{
 		$id_usuario = '';
 		
 		foreach ($nuevo_usuario[0] as $key ) {
-			$query_usuario = $this->db->query("UPDATE usuarios SET  uname = '$key->uname', nombre = '$key->nombre', apaterno = '$key->apaterno', amaterno = '$key->amaterno', ci = '$key->ci' WHERE id_usuario = $key->id_usuario");
+			if($key->password){
+				$query_usuario = $this->db->query("UPDATE usuarios SET  uname = '$key->uname', nombre = '$key->nombre', apaterno = '$key->apaterno', amaterno = '$key->amaterno', ci = '$key->ci', password = md5('$key->password') WHERE id_usuario = $key->id_usuario");
+			}
+			else {
+				$query_usuario = $this->db->query("UPDATE usuarios SET  uname = '$key->uname', nombre = '$key->nombre', apaterno = '$key->apaterno', amaterno = '$key->amaterno', ci = '$key->ci' WHERE id_usuario = $key->id_usuario");
+			}
 			$query_borra_permisos = $this->db->query("DELETE FROM permisos WHERE id_usuario = $key->id_usuario");
 			$id_usuario = $key->id_usuario;
 		}
@@ -67,13 +72,18 @@ class Usuarios_model extends CI_Model{
 		return $query_permisos;
 	}
 
+	public function elimina_usuario($usuario){
+		$query = $this->db->query("DELETE FROM usuarios where id_usuario = $usuario");
+		$query_borra_permisos = $this->db->query("DELETE FROM permisos WHERE id_usuario = $usuario");
+		return $query;
+	}
+
 	public function permisos($usuario, $password){
-		$query = $this->db->query("SELECT permiso FROM `permisos` where id_usuario in (select a.id_usuario from usuarios a where a.uname = '$usuario' and a.password = md5($password))");
+		$query = $this->db->query("SELECT permiso FROM `permisos` where id_usuario in (select a.id_usuario from usuarios a where a.uname = '$usuario' and a.password = md5('$password'))");
 		$lista_permisos = array();
 		foreach ($query->result() as $key) {
 			array_push($lista_permisos, $key->permiso);
 		}
-
 		return $lista_permisos;
 	}
 }

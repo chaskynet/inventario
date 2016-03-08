@@ -10,37 +10,50 @@
       </div>
       <div class="modal-body" id="modal_content_resumen">
       	<div class="modal-body well" id="modal_content_almancen">
-      		<input type="hidden" id="id_articulo">
-			<div class="form-group">
-				<label for="ed_cod_articulo">Codigo de Articulo: </label>
-				<input type="text" id="ed_cod_articulo">
-			</div>
-			<div class="form-group">
-				<label for="ed_descripcion">Descripción: </label>
-				<input type="text" id="ed_descripcion">
-			</div>
-			<div class="form-group">
-				<label for="ed_unidad">Unidad: </label>
-				<input type="text" id="ed_unidad">
-			</div>
-			<div class="form-group">
-				<label for="ed_empaque">Empaque: </label>
-				<input type="text" id="ed_empaque">
-			</div>
-			<div class="form-group">
-				<label for="ed_procedencia">Procedencia: </label>
-				<input type="text" id="ed_procedencia">
-			</div>
-			<div class="form-group">
-				<label for="ed_cant_critica">Cantidad Crítica: </label>
-				<input type="text" id="ed_cant_critica">
-			</div>
-			<div class="form-group">
-				<label for="ed_inv_inicial">Inventario Inicial: </label>
-				<input type="text" id="ed_inv_inicial">
-			</div>
+      		<div class="row">
+      			<div class="col-xs-10">
+		      		<input type="hidden" id="id_articulo">
+					<div class="form-group">
+						<label for="ed_cod_articulo">Codigo de Articulo: </label>
+						<input type="text" id="ed_cod_articulo">
+					</div>
+					<div class="form-group">
+						<label for="ed_cod_articulo">Codigo de Almacen: </label>
+						<input type="text" id="ed_cod_almacen">
+					</div>
+					<div class="form-group">
+						<label for="ed_descripcion">Descripción: </label>
+						<input type="text" id="ed_descripcion" class="form-control">
+					</div>
+					<div class="form-group">
+						<label for="ed_unidad">Unidad: </label>
+						<input type="text" id="ed_unidad">
+					</div>
+					<div class="form-group">
+						<label for="ed_empaque">Empaque: </label>
+						<input type="text" id="ed_empaque">
+					</div>
+					<div class="form-group">
+						<label for="ed_procedencia">Procedencia: </label>
+						<input type="text" id="ed_procedencia">
+					</div>
+					<div class="form-group">
+						<label for="ed_cant_critica">Cantidad Crítica: </label>
+						<input type="text" id="ed_cant_critica">
+					</div>
+					<div class="form-group">
+						<label for="ed_inv_inicial">Inventario Inicial: </label>
+						<input type="text" id="ed_inv_inicial">
+					</div>
 
-			<input type="submit" value="Actualizar Articulo" id="actualizar_articulo" class="btn btn-primary">
+					<input type="submit" value="Actualizar Articulo" id="actualizar_articulo" class="btn btn-primary">
+				</div>
+				<?php if(in_array('chk_borra_art', $this->session->userdata('permisos'))){ ?>
+					<div class="col-xs-2">
+						<img id="elimina_articulo" alt="" src="../assets/images/trash.png">
+					</div>
+				<?php } ?>
+			</div>
       	</div>  
       </div>
       
@@ -69,6 +82,10 @@
 			<div class="form-group">
 				<label for="cod_articulo">Codigo de Articulo: </label>
 				<input type="text" id="cod_articulo" class="form-control uppercase">
+			</div>
+			<div class="form-group">
+				<label for="cod_articulo">Codigo de Almacen: </label>
+				<input type="text" id="cod_almacen" class="form-control">
 			</div>
 			<div class="form-group">
 				<label for="descripcion">Descripción: </label>
@@ -127,7 +144,7 @@
 					<div class=""><?php echo validation_errors();?></div>
 					<div class="form-group">
 						
-						<input type="file" name="archivo" id="archivo" class="form-control" placeholder="Seleccione archivo a importar">
+						<input type="file" name="archivo" id="archivo" class="" placeholder="Seleccione archivo a importar">
 					</div>
 					<input type="submit" value="Subir Archivo" id="upload_file" class="btn btn-primary">
 			<?php echo form_close(); ?>
@@ -175,69 +192,80 @@
 </div>
 <!-- ***************************************** -->
 <div class="row-fluid">
+	<?php if(in_array('chk_modifica', $this->session->userdata('permisos'))){ ?>
+		<input type="hiden" value='tiene' id="roles">
+	<?php } ?>
 	<h2>&nbsp;</h2>
 	<div class="span12">
-			<?php if(in_array('chk_modifica', $this->session->userdata('permisos'))){ ?>
 			<!-- <h3>Inventario</h3> -->
 			<!-- <button class="btn" id="agregar-articulos" data-toggle="modal" data-target="#modal_importa_articulos" style="margin-right:5%;">Importar Artículos</button> -->
-			<a href="" id="agregar-articulos" data-toggle="modal" data-target="#modal_importa_articulos" style="margin-right:10%;">Importar Artículos</a>
-			<a href="" id="nuevo-articulo" data-toggle="modal" data-target="#modal_nuevo_articulo" style="margin-right:10%;">Nuevo Artículo</a>
-			<a href="<?= base_url(); ?>assets/files/template.xls">Descargar Plantilla</a>
-			<?php } ?>
-		<div style="float:right; margin-top: 0%; WIDTH: 25%; margin-right: 5%;">
 			
+			<?php if(in_array('chk_importa_art', $this->session->userdata('permisos'))){ ?>
+				<a href="" id="agregar-articulos" data-toggle="modal" data-target="#modal_importa_articulos" style="margin-right:5%;">Importar Artículos</a>
+				<a href="<?= base_url(); ?>assets/files/template.xls" style="margin-right:5%;">Descargar Plantilla</a>
+			<?php } 
+				if(in_array('chk_crea_art', $this->session->userdata('permisos'))){ 
+			?>
+				<a href="" id="nuevo-articulo" data-toggle="modal" data-target="#modal_nuevo_articulo">Nuevo Artículo</a>
+			<?php } 
+				 if(in_array('chk_modifica', $this->session->userdata('permisos'))){ ?>
+				<a href="" id="actualizar-articulos" style="margin-left: 5%;">Actualizar</a>
+			<?php } ?>
+		<div style="float:right; margin-top: 0%; width: 25%; margin-right: 5%;">
 			<form id="frm_pdf_main_search_invini" name="frm_pdf_main_search_invini" action="to_pdf_search_invini" target="_blank" method="post">
-				
 				<input type="text" id="buscar_invini" name="buscar_invini" class="form-group icono input" placeholder="Buscar" autofocus >
 				<img src="../assets/images/printer2.png" alt="Imprimir" id="imprimir-busqueda-invini" class="imagen printer">
-				
 			</form>
 		</div>
-		<table id="tabla_invini" class="table table-bordered table-striped table-hover table-condensed">
-			<thead class="bg-info">
-				<tr>
-					<th>#</th>
-					<th>Codigo Articulo</th>
-					<th>Descripción</th>
-					<th>Unidad</th>
-					<th>Empaque</th>
-					<th>Procedencia</th>
-					<!-- <th>Fecha</th> -->
-					<th>Cant. Crítica</th>
-					<th>Inv. Inicial</th>
-					<!-- <th>saldo</th> -->
-				</tr>
-			</thead>
-			<tbody>
-			<?php
-				$i = 0;
-				foreach ($articulo as $key) {
-					$i++;
-			?>
-				<tr id="<?= $key->id_articulo; ?>">
-					<td><?= $i; ?></td>
-					<td class="centrar"><?= $key->cod_articulo; ?></td>
-					<?php if(in_array('chk_modifica', $this->session->userdata('permisos'))){ ?>
-					<td><a href="#" data-toggle="modal" data-target="#modal_resumen_movimientos" id="articulo"><?= $key->descripcion; ?></a></td>
-					<?php
-						} else{
-					?>
-						<td><?= $key->descripcion; ?></td>
-					<?php
-						}
-					?>
-					<td class="centrar"><?= $key->unidad; ?></td>
-					<td class="centrar"><?= $key->empaque; ?></td>
-					<td class="centrar"><?= $key->procedencia; ?></td>
-					<!-- <td><?= $key->fecha; ?></td> -->
-					<td class="cantidad_texto"><?= $key->cantidad_critica; ?></td>
-					<td class="cantidad_texto"><?= $key->inventario_inicial; ?></td>
-					<!-- <td class="cantidad_texto"><?= $key->saldo; ?></td> -->
-				</tr>
-			<?php
-				}
-			?>
-			</tbody>
-		</table>
+		<div class="container">
+		<div class="row">
+			<table id="tabla_invini" class="table table-condensed table-striped resaltado cabecera">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>Codigo</th>
+						<th>Almacen</th>
+						<th>Descripción</th>
+						<th>Unidad</th>
+						<th>Empaque</th>
+						<th>Procedencia</th>
+						<th>Cant. Crítica</th>
+						<th>Inv. Inicial</th>
+					</tr>
+				</thead>
+				<tbody>
+				<?php
+					$i = 0;
+					foreach ($articulo as $key) {
+						$i++;
+				?>
+					<tr id="<?= $key->id_articulo; ?>">
+						<td><?= $i; ?></td>
+						<td class="centrar"><?= $key->cod_articulo; ?></td>
+						<td class="centrar"><?= $key->cod_almacen; ?></td>
+						<?php if(in_array('chk_modifica', $this->session->userdata('permisos'))){ ?>
+						<td><a href="#" data-toggle="modal" data-target="#modal_resumen_movimientos" id="articulo"><?= $key->descripcion; ?></a></td>
+						<?php
+							} else{
+						?>
+							<td><?= $key->descripcion; ?></td>
+						<?php
+							}
+						?>
+						<td class="centrar"><?= $key->unidad; ?></td>
+						<td class="centrar"><?= $key->empaque; ?></td>
+						<td class="centrar"><?= $key->procedencia; ?></td>
+						<!-- <td><?= $key->fecha; ?></td> -->
+						<td class="cantidad_texto"><?= ($key->cantidad_critica == 0 ? '-': number_format($key->cantidad_critica,0,".",",")); ?></td>
+						<td class="cantidad_texto"><?= ($key->inventario_inicial == 0 ? '-' : number_format($key->inventario_inicial,0,".",",")); ?></td>
+						<!-- <td class="cantidad_texto"><?= $key->saldo; ?></td> -->
+					</tr>
+				<?php
+					}
+				?>
+				</tbody>
+			</table>
+		</div>
+		</div>
 	</div>
 </div>

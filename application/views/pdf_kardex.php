@@ -17,7 +17,7 @@
 	<?php } ?>
 </div>
 <div class="panel panel-default">
-	<table class="table table-condensed texto_tablas">
+	<table class="table table-condensed table-bordered texto_tablas">
 	<thead>
 		<tr>
 			<th>Fecha</th>
@@ -34,13 +34,13 @@
 	?>
 	<tr>
 		<?php $date=date_create($key->fecha);?>
-		<td><?= date_format($date,"d/m/Y"); ?></td>
-		<td><?= $key->tipo_movimiento; ?></td>
-		<td class="centrar"><?= $key->numero_nota; ?></td>
+		<td class="centrar_texto"><?= date_format($date,"d/m/Y"); ?></td>
+		<td class="centrar_texto"><?= $key->tipo_movimiento; ?></td>
+		<td class="centrar_texto"><?= $key->numero_nota; ?></td>
 
-		<td class="cantidad_texto"><?= number_format($key->entradas,0,".",","); ?></td>
-		<td class="cantidad_texto"><?= number_format($key->salidas,0,".",","); ?></td>
-		<td class="cantidad_texto"><?= number_format($key->saldo,0,".",","); ?></td>
+		<td class="cantidad_texto"><?= ($key->entradas == 0 ? '-':number_format($key->entradas,0,".",",")); ?></td>
+		<td class="cantidad_texto"><?= ($key->salidas == 0 ? '-': number_format($key->salidas,0,".",",")); ?></td>
+		<td class="cantidad_texto"><?= ($key->saldo == 0 ? '-': number_format($key->saldo,0,".",",")); ?></td>
 		
 	</tr>
 	<?php } ?>

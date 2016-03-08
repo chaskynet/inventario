@@ -95,7 +95,7 @@ $('#home').on('click', function(){
 /**
 *
 */
-$('#inventario-inicial').on('click', function(){
+$(document).on('click', '#inventario-inicial', function(){
 	//$('#contenido').html('<h1>hola</>');
 	$('#contenido').load('carga_inventario');
 });
@@ -162,12 +162,11 @@ $(document).on('click', '#nueva-salida', function(e){
 
     				 	  $('#h_nota_salida').val(item.numero_nota);
 				      });
+              $('#agregar-articulos-salida').removeClass('ocultar');
               $('#cabecera_salida').removeClass('ocultar');
               $('#cabecera_salida2').removeClass('ocultar');
             }
         });
-
-	// $('#cabecera_salida').removeClass('ocultar');
 });
 
 /**
@@ -175,6 +174,7 @@ $(document).on('click', '#nueva-salida', function(e){
 */
 $(document).on('click', '#nueva-entrada', function(e){
   e.preventDefault();
+  //data-toggle="modal" data-target="#modal_añadir_articulos"
   $('#contenido').load('carga_entrada');
   
 	$.ajax({
@@ -199,6 +199,7 @@ $(document).on('click', '#nueva-entrada', function(e){
 
                 $('#h_nota_entrada').val(item.numero_nota);
       				 });
+              $('#agregar-articulos-entrada').removeClass('ocultar');
               $('#cabecera_salida').removeClass('ocultar');
               $('#cabecera_salida2').removeClass('ocultar');
             }
@@ -207,12 +208,34 @@ $(document).on('click', '#nueva-entrada', function(e){
 	
 });
 
+function addslashes(string) {
+    return string.replace(/\\/g, '\\\\').
+        // replace(/\u0008/g, '\\b').
+        // replace(/\t/g, '\\t').
+        // replace(/\n/g, '\\n').
+        // replace(/\f/g, '\\f').
+        // replace(/\r/g, '\\r').
+        replace(/'/g, '``').
+        replace(/"/g, '``');
+}
+
+/**
+* Desc: Hace movible la ventana modal
+*
+**/
+$(function() {
+ $("#modal_añadir_articulos").draggable({
+      handle: ".modal-header"
+  });
+});
+
 /**
 * Author: Jorge Anibal Zapata Agreda
 * Desc: Realiza la busqueda de articulos a traves de llamda AJAX
 */
+//$(document).on('keyup', '#articulo_buscar', function(e){
 $(document).on('keyup', '#articulo_buscar', function(e){
-	if (e.which == 13) {
+	
 		var consulta = $("#articulo_buscar").val();
 		var url = 'busca_articulo';
 		$.ajax({
@@ -233,7 +256,7 @@ $(document).on('keyup', '#articulo_buscar', function(e){
               $.each(objeto, function(i, item) {
 				cadena += '<tr>'
 						+'<td>'
-						+'<input type="checkbox" class="chkbox" name="articulo[]" data-cod-articulo="'+item.cod_articulo+'" data-descripcion="'+item.descripcion+'" data-unidad="'+item.unidad+'" data-empaque="'+item.empaque+'" data-procedencia="'+item.procedencia+'">'
+						+'<input type="checkbox" class="chkbox" name="articulo[]" data-cod-articulo="'+item.cod_articulo+'" data-almacen ="'+item.cod_almacen+'" data-descripcion="'+addslashes(item.descripcion)+'" data-unidad="'+item.unidad+'" data-empaque="'+item.empaque+'" data-procedencia="'+item.procedencia+'">'
 						+item.cod_articulo
 						+'</td>'
 						+'<td>'
@@ -250,7 +273,7 @@ $(document).on('keyup', '#articulo_buscar', function(e){
               $('#tabla_articulos tbody').append(cadena);
             }
         });
-	};
+	
 });
 
 /**
@@ -263,27 +286,27 @@ $(document).on('click', '#cargar', function(e){
             {
               var codigo = $(this).data('cod-articulo');
               var cadena = '<tr id='+codigo+'>'
-                              +'<td>'
+                              +'<td style="width:70px;">'
                               +'<img src="../assets/images/trash.png" alt="" id="elimina_prod">'
                               +'</td>'
-                              +'<td id="codigo">'
+                              +'<td id="codigo" style="width:90px;">'
                                 +$(this).data('cod-articulo')
                               +'</td>'
-                              +'<td id="descripcion" class="texto">'
+                              +'<td id="almacen" style="width:90px;">'
+                                +$(this).data('almacen')
+                              +'</td>'
+                              +'<td id="descripcion" style="width:450px;text-align: left;">'
                                // +'<a href="" id="kardex_articulo" data-toggle="modal" data-target="#modal_kardex_articulos">'
                                 +$(this).data('descripcion')
                                 //+'</a>'
                               +'</td>'
-                              +'<td id="procedencia">'
+                              +'<td id="procedencia" style="width:120px;">'
                                 +$(this).data('procedencia')
                               +'</td>'
-                              +'<td id="unidad">'
+                              +'<td id="unidad" class="centrar_texto" style="width:120px;">'
                                 +$(this).data('unidad')
                               +'</td>'
-                              +'<td id="empaque">'
-                                +$(this).data('empaque')
-                              +'</td>'
-                              +'<td>'
+                              +'<td style="width:180px;">'
                                 +'<input type="text" id="cantidad" class="cantidad" placeholder="0">'
                               +'</td>'
                             +'</tr>';
@@ -292,7 +315,8 @@ $(document).on('click', '#cargar', function(e){
           if (tamcheck>0){
               //$( this ).dialog( "close" );
 
-              $("#tabla_articulos tbody").empty();
+              //$("#tabla_articulos tbody").empty();
+              $("input[name='articulo[]']:checked").attr('checked',false);
               $("#articulo_buscar").val('');
           }
           else{
@@ -310,6 +334,64 @@ $(document).on('click','#elimina_prod',function(){
 });
 
 /**
+*
+* Elimina productos de las notas de Entrada
+*
+**/
+$(document).on('click','#elimina_prod_ed_entrada',function(){
+  var objArt = new Object()
+  var obj = $(this).parents().get(1);
+  objArt.cantidad = $(obj).find('#cantidad').val();
+  objArt.codigo = $(obj).find('#codigo').text();
+  objArt.tabla = 'entrada';
+  objArt = JSON.stringify(objArt);
+  $.ajax({
+      url: 'eliminina_art_editada',
+      data: {data: objArt},
+      type: "POST",
+      dataType: "html",
+      error: function()
+      {
+          alert('Error al Guardar!');
+      },
+      success: function(response)
+      {
+        console.log(response);
+      }
+  });
+  $(this).parents().get(1).remove();
+});
+
+/**
+*
+* Elimina productos de las notas de Salidas
+*
+**/
+$(document).on('click','#elimina_prod_ed_salida',function(){
+  var objArt = new Object()
+  var obj = $(this).parents().get(1);
+  objArt.cantidad = $(obj).find('#cantidad').val();
+  objArt.codigo = $(obj).find('#codigo').text();
+  objArt.tabla = 'salida';
+  objArt = JSON.stringify(objArt);
+  $.ajax({
+      url: 'eliminina_art_editada',
+      data: {data: objArt},
+      type: "POST",
+      dataType: "html",
+      error: function()
+      {
+          alert('Error al Guardar!');
+      },
+      success: function(response)
+      {
+        console.log(response);
+      }
+  });
+  $(this).parents().get(1).remove();
+});
+
+/**
 * Author: Jorge Anibal Zapata Agreda
 * Desc: Guarda los articulos de SALIDA del Almacen
 */
@@ -323,7 +405,6 @@ $(document).on('click', '#guardar-salida', function(e){
     if (numero_nota.length < 1) {
         alert("Debe generar un numero de nota");
     }else{
-	  
         var filas = $("#tabla_salidas tbody tr");
     	  
         if (filas.length > 0) {
@@ -339,6 +420,7 @@ $(document).on('click', '#guardar-salida', function(e){
     		    articulo_salida.vendedor = vendedor;
 
     		    articulo_salida.codigo = $(this).find('#codigo').text();
+            articulo_salida.almacen = $(this).find('#almacen').text();
     		    articulo_salida.descripcion = $(this).find('#descripcion').text();
     		    articulo_salida.procedencia = $(this).find('#procedencia').text(); 
     		    articulo_salida.unidad = $(this).find('#unidad').text();
@@ -349,11 +431,11 @@ $(document).on('click', '#guardar-salida', function(e){
     		  });
     		  
     		  var newObj2 = JSON.stringify(lista_articulos_salida);
-    		  console.log(newObj2);
+          var modo_edicion = $('#modo_edicion').val();
           if (!valida_ceros) {
       		  $.ajax({
       	        url: 'guarda_nota_salida',
-      	        data: {data: newObj2},
+      	        data: {data: newObj2, modo_edicion: modo_edicion},
       	        type: "POST",
       	        dataType: "html",
       	        error: function()
@@ -393,6 +475,7 @@ $(document).on('click', '#imprimir-salida', function(e){
 $(document).on('change', '#num_nota_salida', function(){
 
 	var nota = $(this).val();
+  $('#modo_edicion').val('true');
 	$.ajax({
         url: 'trae_nota_salida',
         data: {data: nota},
@@ -419,10 +502,13 @@ $(document).on('change', '#num_nota_salida', function(){
                 $.each(objeto, function(i, item) {
       			     cadena += '<tr>'
       					      +'<td>'
-                      +'<img src="../assets/images/trash.png" alt="" id="elimina_prod">'
+                      +'<img src="../assets/images/trash.png" alt="" id="elimina_prod_ed_salida" class="ocultar">'
                       +'</td>'
                       +'<td id="codigo">'
                         +item.cod_articulo
+                      +'</td>'
+                      +'<td id="almacen">'
+                        +item.cod_almacen
                       +'</td>'
                       +'<td id="descripcion" class="texto">'
                         +item.descripcion
@@ -433,9 +519,9 @@ $(document).on('change', '#num_nota_salida', function(){
                       +'<td id="unidad">'
                         +item.unidad
                       +'</td>'
-                      +'<td id="empaque">'
-                        +item.empaque
-                      +'</td>'
+                      // +'<td id="empaque">'
+                      //   +item.empaque
+                      // +'</td>'
                       +'<td>'
                         +'<input type="text" id="cantidad" class="cantidad" placeholder="0" disabled=true value="'+item.cantidad+'">'
                       +'</td>'
@@ -470,6 +556,7 @@ $(document).on('click', '#guardar-entrada', function(e){
     		    articulo_entrada.vendedor = vendedor;
 
     		    articulo_entrada.codigo = $(this).find('#codigo').text();
+            articulo_entrada.almacen = $(this).find('#almacen').text();
     		    articulo_entrada.descripcion = $(this).find('#descripcion').text();
     		    articulo_entrada.procedencia = $(this).find('#procedencia').text(); 
     		    articulo_entrada.unidad = $(this).find('#unidad').text();
@@ -480,9 +567,10 @@ $(document).on('click', '#guardar-entrada', function(e){
     		  });
     		  
     		  var newObj2 = JSON.stringify(lista_articulos_entrada);
+          var modo_edicion = $('#modo_edicion').val();
     		  $.ajax({
     	        url: 'guarda_nota_entrada',
-    	        data: {data: newObj2},
+    	        data: {data: newObj2, modo_edicion: modo_edicion},
     	        type: "POST",
     	        dataType: "html",
     	        error: function()
@@ -508,7 +596,7 @@ $(document).on('click', '#imprimir-entrada', function(e){
 	var filas = $("#tabla_salidas tbody tr");
 	  if (filas.length > 0) {
 
-	  	$('#frm_pdf').submit();
+	  	$('#frm_pdf_entradas').submit();
 	  }else{
 	  	alert ('Debe ingresar al menos 1 articulo');
 	  }
@@ -540,7 +628,7 @@ $(document).on('click','#upload_file',function(e) {
           $.each(duples, function(i, item) {
             cadena += '<tr>'
                       +'<td id="codigo_repetido">'
-                        +'<input type="checkbox" class="chkbox" name="articulo_duple[]" data-cod-articulo="'+item.cod_articulo+'">'
+                        +'<input type="checkbox" class="chkbox" name="articulo_duple" data-cod-articulo="'+item.cod_articulo+'">'
                         +item.cod_articulo
                       +'</td>'
                       +'<td id="descripcion" class="texto">'
@@ -566,16 +654,18 @@ $(document).on('click','#upload_file',function(e) {
 $(document).on('click', '#btn_actualiza_repetidos', function(e){
   e.preventDefault();
   var tamcheck = $( "input:checkbox:checked" ).length;
-  var articulo_duple = new Object();
+  
   var lista_articulos_duples = new Array();   
-  //console.log(tamcheck);
+  console.log(tamcheck);
   if (tamcheck > 0) {
-      $( "input[name='articulo_duple[]']:checked").each(function(){
-        articulo_duple.cod_articulo = $(this).data('cod-articulo');
-        lista_articulos_duples.push(articulo_duple);
+
+      $( "input[type=checkbox]:checked").each(function(){
+        
+        lista_articulos_duples.push($(this).data('cod-articulo'));
       });
+      
       var datos = JSON.stringify(lista_articulos_duples);
-      //console.log(datos);
+      
       $.ajax({
           url: 'actualiza_repetidos',
           data: {data: datos},
@@ -587,7 +677,7 @@ $(document).on('click', '#btn_actualiza_repetidos', function(e){
           },
           success: function(response)
           {
-            //console.log(response);
+            console.log(response);
             alert('Actualizado');
           }
       });
@@ -612,10 +702,58 @@ $(document).on('hide.bs.modal','#modal_importa_articulos', function(e){
     $('body').removeClass('modal-open');
     $('.modal-backdrop').remove();
     $('#contenido').load('carga_inventario');
-    // if(!confirm('You want to close me?'))
-    //  e.preventDefault();
 });
 
+/**
+* Desc: Elimina Articulo
+*/
+$(document).on('click', '#elimina_articulo', function(e){
+    e.preventDefault();
+    var id_articulo = $('#id_articulo').val();
+    $.ajax({
+        url: 'elimina_articulo',
+        data: {data: id_articulo},
+        type: "POST",
+        dataType: "html",
+        error: function()
+        {
+            alert('Error al Eliminar Articulo!');
+        },
+        success: function(response)
+        {
+            alert("Articulo Eliminado");
+            $('#ed_cod_articulo').val('');
+            $('#ed_descripcion').val('');
+            $('#ed_unidad').val('');
+            $('#ed_empaque').val('');
+            $('#ed_procedencia').val('');
+            $('#ed_inv_inicial').val('');
+            $('#ed_saldo').val('');
+            $('#ed_cant_critica').val('');
+        }
+    });
+});
+
+/**
+*
+* Desc: cuadra inventario
+**/
+$(document).on('click','#actualizar-articulos', function(e){
+  e.preventDefault();
+  $.ajax({
+        url: 'cuadra_inventario',
+        type: "POST",
+        dataType: "html",
+        error: function()
+        {
+            alert('Error al Traer los datos del Articulo!');
+        },
+        success: function(response)
+        {
+          alert('Resultado: '+response);
+        }
+  });
+});
 /**
 * Desc: Carga venta modal con datos del articulo a modificar
 */
@@ -624,7 +762,7 @@ $(document).on('click', '#articulo', function (ev) {
 	var objFila=$(this).parents().get(1);
 	var id_articulo = $(objFila).attr('id');
 	$.ajax({
-		url: 'carga_datos_articulo',
+		    url: 'carga_datos_articulo',
         data: {data: id_articulo},
         type: "POST",
         dataType: "html",
@@ -639,6 +777,7 @@ $(document).on('click', '#articulo', function (ev) {
             $.each(objeto, function(i, item) {
   	          $('#id_articulo').val(id_articulo);
   	          $('#ed_cod_articulo').val(item.cod_articulo);
+              $('#ed_cod_almacen').val(item.cod_almacen);
       			  $('#ed_descripcion').val(item.descripcion);
       			  $('#ed_unidad').val(item.unidad);
       			  $('#ed_empaque').val(item.empaque);
@@ -656,6 +795,7 @@ $(document).on('click', '#actualizar_articulo', function(){
 	var articulo_actualizado = new Object();
 	articulo_actualizado.id_articulo = $('#id_articulo').val();
 	articulo_actualizado.cod_articulo = $('#ed_cod_articulo').val();
+  articulo_actualizado.cod_almacen = $('#ed_cod_almacen').val();
 	articulo_actualizado.descripcion = $('#ed_descripcion').val();
 	articulo_actualizado.unidad = $('#ed_unidad').val();
 	articulo_actualizado.empaque = $('#ed_empaque').val();
@@ -678,6 +818,7 @@ $(document).on('click', '#actualizar_articulo', function(){
         {
           alert('Articulo Actualizado correctamente!');
           $('#ed_cod_articulo').val('');
+          $('#ed_cod_almacen').val('');
     		  $('#ed_descripcion').val('');
     		  $('#ed_unidad').val('');
     		  $('#ed_empaque').val('');
@@ -685,7 +826,6 @@ $(document).on('click', '#actualizar_articulo', function(){
     		  $('#ed_inv_inicial').val('');
     		  $('#ed_saldo').val('');
     		  $('#ed_cant_critica').val('');
-          console.log(response);
         }
       });
 });
@@ -725,7 +865,6 @@ $(document).on('click', '#crear_articulo', function(){
           $('#inv_inicial').val('');
           //$('#saldo').val('');
           $('#cant_critica').val('');
-          console.log(response);
         }
       });
 });
@@ -734,22 +873,20 @@ $(document).on('hide.bs.modal','#modal_resumen_movimientos', function(e){
     $('body').removeClass('modal-open');
     $('.modal-backdrop').remove();
     $('#contenido').load('carga_inventario');
-    // if(!confirm('You want to close me?'))
-    //  e.preventDefault();
 });
 
 $(document).on('hide.bs.modal','#modal_nuevo_articulo', function(e){
     $('body').removeClass('modal-open');
     $('.modal-backdrop').remove();
     $('#contenido').load('carga_inventario');
-    // if(!confirm('You want to close me?'))
-    //  e.preventDefault();
 });
+
 /**
 * Desc: Trae una nota de Entrada de Articulos
 */
 $(document).on('change', '#num_nota_entrada', function(){
 	var nota = $(this).val();
+  $('#modo_edicion').val('true');
 	$.ajax({
         url: 'trae_nota_entrada',
         data: {data: nota},
@@ -775,29 +912,32 @@ $(document).on('change', '#num_nota_entrada', function(){
           $.each(objeto, function(i, item) {
 				  cadena += '<tr>'
 					     	 +'<td>'
-	                      +'<img src="../assets/images/trash.png" alt="" id="elimina_prod">'
-	                      +'</td>'
-	                      +'<td id="codigo">'
-	                        +item.cod_articulo
-	                      +'</td>'
-	                      +'<td id="descripcion" class="texto">'
-	                        +item.descripcion
-	                      +'</td>'
-	                      +'<td id="procedencia">'
-	                        +item.procedencia
-	                      +'</td>'
-	                      +'<td id="unidad">'
-	                        +item.unidad
-	                      +'</td>'
-	                      +'<td id="empaque">'
-	                        +item.empaque
-	                      +'</td>'
-	                      +'<td>'
-	                        +'<input type="text" id="cantidad" class="cantidad" placeholder="0" disabled=true value="'+item.cantidad+'">'
-	                      +'</td>'
-						            +'</tr>';
+                  +'<img src="../assets/images/trash.png" alt="" id="elimina_prod_ed_entrada" class="ocultar">'
+                  +'</td>'
+                  +'<td id="codigo">'
+                    +item.cod_articulo
+                  +'</td>'
+                  +'<td id="almacen">'
+                    +item.cod_almacen
+                  +'</td>'
+                  +'<td id="descripcion" class="texto">'
+                    +item.descripcion
+                  +'</td>'
+                  +'<td id="procedencia">'
+                    +item.procedencia
+                  +'</td>'
+                  +'<td id="unidad">'
+                    +item.unidad
+                  +'</td>'
+                  // +'<td id="empaque">'
+                  //   +item.empaque
+                  // +'</td>'
+                  +'<td>'
+                    +'<input type="text" id="cantidad" class="cantidad" placeholder="0" disabled=true value="'+item.cantidad+'">'
+                  +'</td>'
+			            +'</tr>';
 				})
-          $('#tabla_salidas tbody').append(cadena);
+          $('#tabla_salidas tbody').html(cadena);
         }
       });
 });
@@ -809,10 +949,13 @@ $(document).on('change', '#num_nota_entrada', function(){
 $(document).on('click', '#editar-cantidades', function(e){
 	e.preventDefault();
 	$('input:text').each( function() {
-		console.log($(this).val());
 		$(this).removeAttr('disabled');
 	});
-
+  $('tbody img').each( function() {
+    $(this).toggleClass('ocultar');
+  });
+  $('#agregar-articulos-salida').removeClass('ocultar');
+  $('#agregar-articulos-entrada').removeClass('ocultar');
 });
 
 
@@ -920,7 +1063,6 @@ $(document).on('click', '#crear_usuario', function(e){
     		  $('#ci').val('');
     		  $('#password').val('');
     		  // $("input[name=rol]:checked").val('');
-          console.log(response);
         }
   });
 });
@@ -955,7 +1097,7 @@ $(document).on('click', '#nombre_usuario', function(e){
     			  $('#ed_apaterno').val(item.apaterno);
     			  $('#ed_amaterno').val(item.amaterno);
     			  $('#ed_ci').val(item.ci);
-    			  $('#ed_password').val('');
+    			  $('#ed_password').val(item.password);
     			  $("input[name=ed_rol]:checked").val(item.rol);
 	        });
           $.each(objeto.permisos, function(i, item){
@@ -965,6 +1107,8 @@ $(document).on('click', '#nombre_usuario', function(e){
             if (item == 'chk_inv_ini') {
               //console.log(i+'--'+item);
               $('#chk_inv_ini').prop('checked', true);
+            }else if (item == 'chk_exist'){
+              $('#chk_exist').prop('checked', true);
             }else if (item == 'chk_nota_ingre'){
               $('#chk_nota_ingre').prop('checked', true);
             }else if (item == 'chk_nota_salida'){
@@ -975,10 +1119,16 @@ $(document).on('click', '#nombre_usuario', function(e){
               $('#chk_lst_conteo').prop('checked', true);
             }else if (item == 'chk_mov_inventa'){
               $('#chk_mov_inventa').prop('checked', true);
+            }else if (item == 'chk_modifica'){
+              $('#chk_modifica').prop('checked', true);
             }else if (item == 'chk_config'){
               $('#chk_config').prop('checked', true);
-            }else if (item == 'chk_inv_ini'){
-
+            }else if (item == 'chk_crea_art'){
+              $('#chk_crea_art').prop('checked', true);
+            } else if (item == 'chk_importa_art'){
+              $('#chk_importa_art').prop('checked', true);
+            } else if (item == 'chk_borra_art'){
+              $('#chk_borra_art').prop('checked', true);
             } 
             
           }); 
@@ -986,6 +1136,10 @@ $(document).on('click', '#nombre_usuario', function(e){
 	});
 	$('#modal_content_usuario').html();
 })
+
+$(document).on('click', '#chk_password', function(){
+  $('#ed_password').prop('disabled', false);
+});
 
 $(document).on('click', '#actualizar_usuario', function(){
   var usuario = new Array();
@@ -1001,8 +1155,9 @@ $(document).on('click', '#actualizar_usuario', function(){
 	usuario_actualizado.apaterno = $('#ed_apaterno').val();
 	usuario_actualizado.amaterno = $('#ed_amaterno').val();
 	usuario_actualizado.ci = $('#ed_ci').val();
-	//usuario_actualizado.password = $('#ed_password').val();
-	//usuario_actualizado.rol = $("input[name=ed_rol]:checked").val();
+  if ($('#chk_password').prop('checked')) {
+    usuario_actualizado.password = $('#ed_password').val();
+  }
 
   $( "input[type=checkbox]:checked").each(function(){ 
     //console.log($(this).attr('id'));
@@ -1016,8 +1171,6 @@ $(document).on('click', '#actualizar_usuario', function(){
   usuario.push(lista_permisos);
 
 	var update_usuario = JSON.stringify(usuario);
-
-  console.log(update_usuario);
 
 	$.ajax({
         url: 'actualizar_usuario',
@@ -1037,7 +1190,26 @@ $(document).on('click', '#actualizar_usuario', function(){
       	  $('#ed_amaterno').val('');
       	  $('#ed_ci').val('');
       	  $('#ed_password').val('');
-          console.log('respuesta: '+response);
+        }
+      });
+});
+
+$(document).on('click', '#elimina_usr', function(){
+  var objFila=$(this).parents().get(1);
+  var id_usuario = $(objFila).attr('id');
+  $.ajax({
+        url: 'elimina_usuario',
+        data: {data: id_usuario},
+        type: "POST",
+        dataType: "html",
+        error: function()
+        {
+            alert('Error al Borrar!');
+        },
+        success: function(response)
+        {
+          alert('Usuario Borrado correctamente!');
+          $('#contenido').load('creacion_usuarios');
         }
       });
 });
@@ -1073,6 +1245,8 @@ $(document).on('click', '#crear_almacen', function(e){
 	var crear_almacen = new Object();
 	crear_almacen.nombre_almacen = $('#nombre_almacen').val();
 	crear_almacen.abreviacion = $('#abreviacion').val();
+  crear_almacen.direccion = $('#direccion').val();
+  crear_almacen.telefono = $('#telefono').val();
 	
 	var new_almacen = JSON.stringify(crear_almacen);
 	$.ajax({
@@ -1088,9 +1262,9 @@ $(document).on('click', '#crear_almacen', function(e){
         {
           alert('Almacen creado correctamente!');
           $('#nombre_almacen').val('');
-		  $('#abreviacion').val('');
-		  
-          console.log(response);
+		      $('#abreviacion').val('');
+          $('#direccion').val('');
+          $('#telefono').val('');
         }
       });
 });
@@ -1106,7 +1280,7 @@ $(document).on('click', '#nombre_almacen', function(e){
 	var objFila=$(this).parents().get(1);
 	var id_almacen = $(objFila).attr('id');
 	$.ajax({
-		url: 'carga_datos_almacen',
+		    url: 'carga_datos_almacen',
         data: {data: id_almacen},
         type: "POST",
         dataType: "html",
@@ -1122,6 +1296,8 @@ $(document).on('click', '#nombre_almacen', function(e){
 	          $('#id_almacen').val(id_almacen);
 	          $('#ed_nombre_almacen').val(item.nombre_almacen);
 	          $('#ed_abreviacion').val(item.abreviacion);
+            $('#ed_direccion').val(item.direccion);
+            $('#ed_telefono').val(item.fono);
 	          $('#ed_abreviacion_old').val(item.abreviacion);
 		  	});
           //alert('Usuario Editado correctamente!');
@@ -1136,6 +1312,8 @@ $(document).on('click', '#actualizar_almacen', function(){
 	almacen_actualizado.id_almacen = $('#id_almacen').val();
 	almacen_actualizado.nombre_almacen = $('#ed_nombre_almacen').val();
 	almacen_actualizado.abreviacion = $('#ed_abreviacion').val();
+  almacen_actualizado.direccion = $('#ed_direccion').val();
+  almacen_actualizado.telefono = $('#ed_telefono').val();
 	almacen_actualizado.abreviacion_old = $('#ed_abreviacion_old').val();
 
 	var update_almacen = JSON.stringify(almacen_actualizado);
@@ -1152,9 +1330,10 @@ $(document).on('click', '#actualizar_almacen', function(){
         {
           alert('Almacen Actualizado correctamente!');
           $('#ed_nombre_almacen').val('');
-		  $('#ed_abreviacion').val('');
-		  
-          console.log(response);
+		      $('#ed_abreviacion').val('');
+          $('#ed_direccion').val('');
+          $('#ed_telefono').val('');
+
         }
       });
 });
@@ -1165,7 +1344,6 @@ $(document).on('click', '#actualizar_almacen', function(){
 */
 
 $(document).on('keyup', '#buscar', function(e){
-	console.log($(this).val());
 	$.ajax({
         url: 'busca_articulo',
         data: {data: $(this).val()},
@@ -1185,41 +1363,40 @@ $(document).on('keyup', '#buscar', function(e){
           var cadena = '';
           var ii = 1;
           $.each(objeto, function(i, item) {
-			cadena += '<tr>'
-					+'<td class="centrar">'
-				
-					+ii
-					+'</td>'
-					+'<td class="centrar">'
-					+item.cod_articulo
-					+'</td>'
-					+'<td>'
-					+item.descripcion
-					+'</td>'
-					+'<td class="centrar">'
-					+item.procedencia
-					+'</td>'
-					+'<td class="centrar">'
-					+item.unidad
-					+'</td>'
-					+'<td class="centrar">'
-					+item.empaque
-					+'</td>'
-					+'<td class="cantidad_texto">'
-					+item.saldo
-					+'</td>'
-					+'</tr>';
-					ii++;
-			})
+  			    cadena += '<tr>'
+  					+'<td class="centrar">'
+  					+ii
+  					+'</td>'
+  					+'<td class="centrar_texto">'
+  					+item.cod_articulo
+  					+'</td>'
+            +'<td class="centrar_texto">'
+            +item.cod_almacen
+            +'</td>'
+  					+'<td>'
+  					+item.descripcion
+  					+'</td>'
+  					+'<td class="centrar_texto">'
+  					+item.procedencia
+  					+'</td>'
+  					+'<td class="centrar_texto">'
+  					+item.unidad
+  					+'</td>'
+  					+'<td class="centrar">'
+  					+item.empaque
+  					+'</td>'
+  					+'<td class="cantidad_texto">'
+  					+number_format(item.saldo,0)
+  					+'</td>'
+  					+'</tr>';
+  					ii++;
+			    })
           $('#tabla_existencias tbody').append(cadena);
-		  
-          console.log(response);
         }
       });
 });
 
 $(document).on('keyup', '#buscar_invini', function(e){
-  console.log($(this).val());
   $.ajax({
         url: 'busca_articulo',
         data: {data: $(this).val()},
@@ -1235,17 +1412,28 @@ $(document).on('keyup', '#buscar_invini', function(e){
           var objeto = JSON.parse(response);
           var cadena = '';
           var ii = 1;
+          var permisos =  $('#roles').val();
+          
+
           $.each(objeto, function(i, item) {
-      cadena += '<tr id="'+item.id_articulo+'">'
+          if ( permisos == 'tiene')  {
+              var descripcion = '<a href="#" data-toggle="modal" data-target="#modal_resumen_movimientos" id="articulo">'+item.descripcion+'</a>';
+
+          } else {
+              var descripcion = item.descripcion; 
+          }
+          cadena += '<tr id="'+item.id_articulo+'">'
           +'<td class="centrar">'
-        
           +ii
           +'</td>'
           +'<td class="centrar">'
           +item.cod_articulo
           +'</td>'
+          +'<td class="centrar">'
+          +item.cod_almacen
+          +'</td>'
           +'<td>'
-          +'<a href="#" data-toggle="modal" data-target="#modal_resumen_movimientos" id="articulo">'+item.descripcion+'</a>'
+          +descripcion
           +'</td>'
           +'<td class="centrar">'
           +item.unidad
@@ -1260,14 +1448,12 @@ $(document).on('keyup', '#buscar_invini', function(e){
           +item.cantidad_critica
           +'</td>'
           +'<td class="cantidad_texto">'
-          +item.inventario_inicial
+          +number_format(item.inventario_inicial,0)
           +'</td>'
           +'</tr>';
           ii++;
       })
           $('#tabla_invini tbody').append(cadena);
-      
-          console.log(response);
         }
       });
 });
@@ -1286,7 +1472,6 @@ $(document).on('click', '#imprimir-busqueda-invini', function(){
 });
 
 $(document).on('keyup', '#buscar_para_conteo', function(e){
-	console.log($(this).val());
 	$.ajax({
         url: 'busca_articulo_conteo',
         data: {data: $(this).val()},
@@ -1310,23 +1495,26 @@ $(document).on('keyup', '#buscar_para_conteo', function(e){
 					+'<td>'
 					+ii
 					+'</td>'
-					+'<td class="centrar">'
+					+'<td class="centrar_texto">'
 					+item.cod_articulo
 					+'</td>'
+          +'<td class="centrar_texto">'
+          +item.cod_almacen
+          +'</td>'
 					+'<td>'
 					+item.descripcion
 					+'</td>'
-					+'<td class="centrar">'
-					+item.procedencia
-					+'</td>'
-					+'<td class="centrar">'
+					+'<td class="centrar_texto">'
 					+item.unidad
 					+'</td>'
-					+'<td class="centrar">'
+					+'<td class="centrar_texto">'
 					+item.empaque
 					+'</td>'
+					+'<td class="centrar_texto">'
+					+item.procedencia
+					+'</td>'
 					+'<td class="cantidad_texto">'
-					+item.saldo
+					+number_format(item.saldo,0)
 					+'</td>'
 					+'<td class="centrar">'
 					+'_______'
@@ -1335,8 +1523,6 @@ $(document).on('keyup', '#buscar_para_conteo', function(e){
 			ii++;
 			});
           $('#tabla_conteo tbody').append(cadena);
-		  
-          console.log(response);
         }
       });
 });
@@ -1345,7 +1531,7 @@ $(document).on('keyup', '#buscar_para_conteo', function(e){
 * 
 * Desc: Seccion Reporte para Conteo Fisico
 */
-$('#rep-para-conteo').on('click', function(e){
+$(document).on('click', '#rep-para-conteo', function(e){
 	e.preventDefault();
 	$('#contenido').load('rep_conteo_fisico');
 });
@@ -1374,7 +1560,6 @@ $(document).on('click', '#rep-mov-inv', function(e){
 *
 */
 $(document).on('keyup', '#buscar_movimiento', function(e){
-	console.log($(this).val());
 	$.ajax({
         url: 'busca_articulo_movimiento',
         data: {data: $(this).val()},
@@ -1398,19 +1583,22 @@ $(document).on('keyup', '#buscar_movimiento', function(e){
 					+'<td>'
 					+ii
 					+'</td>'
-					+'<td class="centrar">'
+					+'<td class="centrar_texto">'
 					+item.cod_articulo
 					+'</td>'
+          +'<td class="centrar_texto">'
+          +item.almacen
+          +'</td>'
 					+'<td><a href="" id="kardex_articulo" data-toggle="modal" data-target="#modal_kardex_articulos">'
 					+item.descripcion
 					+'</a></td>'
-					+'<td class="centrar">'
+					+'<td class="centrar_texto">'
 					+item.unidad
 					+'</td>'
-					+'<td class="centrar">'
-					+item.empaque
-					+'</td>'
-					+'<td class="centrar">'
+					// +'<td class="centrar_texto">'
+					// +item.empaque
+					// +'</td>'
+					+'<td class="centrar_texto">'
 					+item.procedencia
 					+'</td>'
 					+'<td class="cantidad_texto">'
@@ -1428,13 +1616,10 @@ $(document).on('keyup', '#buscar_movimiento', function(e){
 					+'<td class="cantidad_texto">'
 					+number_format(item.saldo, 0)
 					+'</td>'
-					
 					+'</tr>';
 			ii++;
 			});
           $('#tabla_movimiento tbody').append(cadena);
-		  
-          console.log(response);
         }
       });
 });
@@ -1462,7 +1647,7 @@ $(document).on('click', '#kardex_articulo', function (ev) {
 	var id_articulo = $(objFila).attr('id');
 	$('#buscar_para_kardex').val(id_articulo);
 	$.ajax({
-		url: 'kardex_articulo',
+		    url: 'kardex_articulo',
         data: {data: id_articulo},
         type: "POST",
         dataType: "html",
@@ -1475,22 +1660,23 @@ $(document).on('click', '#kardex_articulo', function (ev) {
 		 	    $("#kardex_articulos").find("tbody").empty();
           var objeto = JSON.parse(response);
           var cadena = '';
-          
+          $('#descripcion').text(objeto[0].descripcion);
+          $('#invini').text(number_format(objeto[0].invini,0));
           $.each(objeto, function(i, item) {
 			    cadena += '<tr>'
 					+'<td>'
 					+item.fecha
 					+'</td>'
-					+'<td class="centrar">'
+					+'<td class="centrar_texto">'
 					+item.tipo_movimiento
 					+'</td>'
-					+'<td>'
+					+'<td class="centrar_texto">'
 					+item.numero_nota
 					+'</td>'
-					+'<td class="centrar">'
-					+item.entradas
+					+'<td class="centrar_texto">'
+					+number_format(item.entradas, 0)
 					+'</td>'
-					+'<td class="centrar">'
+					+'<td class="centrar_texto">'
 					+number_format(item.salidas, 0)
 					+'</td>'
 					+'<td class="cantidad_texto">'
@@ -1500,8 +1686,6 @@ $(document).on('click', '#kardex_articulo', function (ev) {
 			
 			});
           $('#kardex_articulos tbody').append(cadena);
-		  
-          console.log(response);
     	}
 	});
  });
@@ -1519,6 +1703,7 @@ $(document).on('click', '#imprimir-kardex', function(){
 
 	var filas = $("#kardex_articulos tbody tr");
 	  if (filas.length > 0) {
+      console.log(filas.length);
 	  	$('#frm_pdf_kardex').submit();
 	  }else{
 	  	alert ('Debe ingresar al menos 1 articulo');
@@ -1541,7 +1726,6 @@ $(document).on('change', '#tabla_salidas tbody input', function(){
     data.tipo = tipo;
     data.cantidad = $(this).val();
     data = JSON.stringify(data);
-    console.log($(this).val()+'---'+cod_articulo+'- dat: '+ data );
 
     $.ajax({
           url: 'valida_cantidad',
@@ -1563,7 +1747,6 @@ $(document).on('change', '#tabla_salidas tbody input', function(){
               else{
                 console.log('ok');
               }
-              console.log(objeto[0].valida);
           }
     });
   }
