@@ -339,7 +339,7 @@ $(document).on('click','#elimina_prod',function(){
 *
 **/
 $(document).on('click','#elimina_prod_ed_entrada',function(){
-  var objArt = new Object()
+  var objArt = new Object();
   var obj = $(this).parents().get(1);
   objArt.cantidad = $(obj).find('#cantidad').val();
   objArt.codigo = $(obj).find('#codigo').text();
@@ -773,7 +773,7 @@ $(document).on('click', '#articulo', function (ev) {
         success: function(response)
         {
         	var objeto = JSON.parse(response);
-              
+
             $.each(objeto, function(i, item) {
   	          $('#id_articulo').val(id_articulo);
   	          $('#ed_cod_articulo').val(item.cod_articulo);
@@ -830,11 +830,38 @@ $(document).on('click', '#actualizar_articulo', function(){
       });
 });
 
+/**
+* Desc: Carga Codigos de almacen en ventana modal de creacion de Articulos
+*/
+$(document).on('click', '#nuevo-articulo', function (ev) {
+  ev.preventDefault();
+  
+  $.ajax({
+        url: 'codigo_almacen',
+        type: "POST",
+        dataType: "html",
+        error: function()
+        {
+            alert('Error al Traer los Codigos del Alamcen!');
+        },
+        success: function(response)
+        {
+            var objeto = JSON.parse(response);
+            var cadena = '<option></optio>';
+            $.each(objeto, function(i, item) {
+              cadena += '<option>'+item.abreviacion+'</option>';
+            });
+            $('#cod_almacen').html(cadena);
+        }
+  });
+ });
+
 $(document).on('click', '#crear_articulo', function(){
   //alert('En construccion...');
   var nuevo_articulo = new Object();
   //articulo_actualizado.id_articulo = $('#id_articulo').val();
   nuevo_articulo.cod_articulo = $('#cod_articulo').val();
+  nuevo_articulo.cod_almacen = $('#cod_almacen').val();
   nuevo_articulo.descripcion = $('#descripcion').val();
   nuevo_articulo.unidad = $('#unidad').val();
   nuevo_articulo.empaque = $('#empaque').val();
@@ -1750,4 +1777,54 @@ $(document).on('change', '#tabla_salidas tbody input', function(){
           }
     });
   }
-})
+});
+
+/**********************************************/
+jQuery(document).ready(function ($) {
+  var tables = $('table.stickyHeader');
+  tables.each(function(i){
+    var table = tables[i];
+    var tableClone = $(table).clone(true).empty().removeClass('stickyHeader');
+    var theadClone = $(table).find('thead').clone(true);
+    var stickyHeader =  $('<div></div>').addClass('stickyHeader hide').attr('aria-hidden', 'true');
+    stickyHeader.append(tableClone).find('table').append(theadClone);
+    $(table).after(stickyHeader);
+    
+    var tableHeight = $(table).height();
+    var tableWidth = $(table).width() + Number($(table).css('padding-left').replace(/px/ig,"")) + Number($(table).css('padding-right').replace(/px/ig,"")) + Number($(table).css('border-left-width').replace(/px/ig,"")) + Number($(table).css('border-right-width').replace(/px/ig,""));
+    
+    var headerCells = $(table).find('thead th');
+    var headerCellHeight = $(headerCells[0]).height();
+    
+    var no_fixed_support = false;
+    if (stickyHeader.css('position') == "absolute") {
+      no_fixed_support = true;
+    }
+    
+    var stickyHeaderCells = stickyHeader.find('th');
+    stickyHeader.css('width', tableWidth);
+    var cellWidths = [];
+    for (var i = 0, l = headerCells.length; i < l; i++) {
+      cellWidths[i] = $(headerCells[i]).width();
+    }
+    for (var i = 0, l = headerCells.length; i < l; i++) {
+      $(stickyHeaderCells[i]).css('width', cellWidths[i]);
+    }
+    
+    var cutoffTop = $(table).offset().top;
+    var cutoffBottom = tableHeight + cutoffTop - headerCellHeight;
+    
+    $(window).scroll(function() { 
+    var currentPosition = $(window).scrollTop();
+      if (currentPosition > cutoffTop && currentPosition < cutoffBottom) {
+        stickyHeader.removeClass('hide');
+        if (no_fixed_support) {
+          stickyHeader.css('top', currentPosition + 'px');
+        }
+      }
+      else {
+        stickyHeader.addClass('hide');
+      }
+    });
+  });
+});

@@ -18,8 +18,9 @@
 						<input type="text" id="ed_cod_articulo">
 					</div>
 					<div class="form-group">
-						<label for="ed_cod_articulo">Codigo de Almacen: </label>
-						<input type="text" id="ed_cod_almacen">
+						<label for="ed_cod_aalmacen">Codigo de Almacen: </label>
+						<input type="text" id="ed_cod_almacen" disabled>
+						
 					</div>
 					<div class="form-group">
 						<label for="ed_descripcion">Descripción: </label>
@@ -84,8 +85,11 @@
 				<input type="text" id="cod_articulo" class="form-control uppercase">
 			</div>
 			<div class="form-group">
-				<label for="cod_articulo">Codigo de Almacen: </label>
-				<input type="text" id="cod_almacen" class="form-control">
+				<label for="cod_almacen">Codigo de Almacen: </label>
+				<!-- <input type="text" id="cod_almacen" class="form-control"> -->
+				<select name="cod_almacen" id="cod_almacen">
+					<option value=""></option>
+				</select>
 			</div>
 			<div class="form-group">
 				<label for="descripcion">Descripción: </label>
@@ -219,7 +223,7 @@
 		</div>
 		<div class="container">
 		<div class="row">
-			<table id="tabla_invini" class="table table-condensed table-striped resaltado cabecera">
+			<table id="tabla_invini" class="table table-condensed table-striped resaltado cabecera stickyheader">
 				<thead>
 					<tr>
 						<th>#</th>

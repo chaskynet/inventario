@@ -66,4 +66,9 @@ class Almacenes_model extends CI_Model{
 		$query = $this->db->query("SELECT nombre_almacen FROM almacen where abreviacion = '$abreviacion'");
 		return $query->row()->nombre_almacen;
 	}
+
+	public function codigo_almacen(){
+		$query = $this->db->query("SELECT nombre_almacen, abreviacion FROM almacen");
+		return $query->result();
+	}
 }

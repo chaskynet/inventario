@@ -170,6 +170,7 @@
 	<script type="text/javascript" src="<?php echo base_url();?>assets/css/bootstrap/js/bootstrap.js"></script>
 	
 	<script type="text/javascript" src="<?php echo base_url();?>assets/js/AjaxFileUploader/ajaxfileupload.js"></script>
+	<script type="text/javascript" src="<?php echo base_url();?>assets/js/stickyheader.js"></script>
 	<script type="text/javascript" src="<?php echo base_url();?>assets/js/inventario.js"></script>
 </body>
 </html>

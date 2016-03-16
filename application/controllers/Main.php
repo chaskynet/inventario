@@ -402,7 +402,7 @@ class Main extends CI_Controller
 			$data['fecha'] = date('d/m/Y');
 			$data['datos_main_search'] = $this->Articulos_model->busca_articulo($this->input->post('buscar_para_conteo'));
 			//
-			$mpdf->setFooter('{PAGENO}');
+			$mpdf->setHeader('{PAGENO}');
 			//
 			$mpdf->WriteHTML($this->load->view('pdf_search_conteo', $data, true));
 			ob_clean();
@@ -425,7 +425,7 @@ class Main extends CI_Controller
 			$data['fecha'] = date('d/m/Y');
 			$data['datos_main_search'] = $this->Articulos_model->busca_articulo_movimiento($this->input->post('buscar_para_movimiento'));
 			//
-			$mpdf->setFooter('{PAGENO}');
+			$mpdf->setHeader('{PAGENO}');
 			//
 			$mpdf->WriteHTML($this->load->view('pdf_search_movimiento', $data, true));
 			ob_clean();
@@ -448,9 +448,9 @@ class Main extends CI_Controller
 			$data['fecha'] = date('d/m/Y');
 			$data['data_articulo'] = $this->Articulos_model->kardex_articulo_desc($this->input->post('buscar_para_kardex'));
 			$data['datos_main_search'] = $this->Articulos_model->kardex_articulo($this->input->post('buscar_para_kardex'));
-			//
-			//$mpdf->setFooter('{PAGENO}');
-			//
+			
+			$mpdf->setHeader('{PAGENO}');
+
 			$mpdf->WriteHTML($this->load->view('pdf_kardex', $data, true));
 			ob_clean();
 			$mpdf->Output();
@@ -554,7 +554,11 @@ class Main extends CI_Controller
     public function carga_datos_articulo(){
     	if ($this->session->userdata('is_logged_in')){
     		$datos_articulo = $this->Articulos_model->carga_datos_articulo($_POST['data']);
+   //  		$this->load->model('Almacenes_model');
+			// $codigo_almacen = $this->Almacenes_model->codigo_almacen();
+    		//$datos = array($datos_articulo, $codigo_almacen);
     		echo json_encode($datos_articulo);
+    		//echo json_encode($datos);
     	} else{
     		redirect('main/restringido');
     	}
@@ -619,6 +623,16 @@ class Main extends CI_Controller
 
 			$nuevo_almacen = $this->Almacenes_model->nuevo_almacen($_POST['data']);
 			echo json_encode($nuevo_almacen);
+		} else{
+			redirect('main/restringido');
+		}
+	}
+
+	public function codigo_almacen(){
+		if ($this->session->userdata('is_logged_in')){
+			$this->load->model('Almacenes_model');
+			$codigo_almacen = $this->Almacenes_model->codigo_almacen();
+			echo json_encode($codigo_almacen);
 		} else{
 			redirect('main/restringido');
 		}

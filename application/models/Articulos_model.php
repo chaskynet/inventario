@@ -96,7 +96,8 @@ class Articulos_model extends CI_Model{
          	$query_temporal = $this->db->query('INSERT INTO articulo_temporal (cod_articulo, cod_almacen, descripcion, unidad, empaque, procedencia, inventario_inicial, saldo, cantidad_critica, fecha) values("'.$key['A'].'","'.$key["B"] .'","'.addslashes($key['C']).'","'.$key['D'].'","'.$key['E'].'","'.$key['F'].'","'.$key['G'].'","'.$key['G'].'","'.$key['H'].'", now())');
          }
          
-         $query_duples = $this->db->query("SELECT DISTINCT articulo_tmp.cod_articulo, articulo_tmp.descripcion FROM articulo_temporal as articulo_tmp LEFT JOIN articulo USING (cod_articulo)");
+         $query_duples = $this->db->query("SELECT tmp.cod_articulo, tmp.descripcion from articulo_temporal as tmp where tmp.cod_articulo in (select distinct(a.cod_articulo) from articulo as a)");
+         //$query_duples = $this->db->query("SELECT DISTINCT articulo_tmp.cod_articulo, articulo_tmp.descripcion FROM articulo_temporal as articulo_tmp LEFT JOIN articulo USING (cod_articulo)");
          //$query_duples = $this->db->query("SELECT DISTINCT articulo.cod_articulo, articulo.descripcion FROM articulo as articulo LEFT JOIN articulo_temporal USING (cod_articulo)");
          
          if ($query_duples->num_rows() == 0) {
@@ -123,7 +124,7 @@ class Articulos_model extends CI_Model{
 
 	public function nuevo_articulo($datos){
 		$key = json_decode($datos);
-         $query = $this->db->query('INSERT INTO articulo (cod_articulo, descripcion, unidad, empaque, procedencia, inventario_inicial, saldo, cantidad_critica, fecha) values(UPPER("'.$key->cod_articulo.'"),"'.addslashes($key->descripcion).'","'.$key->unidad.'","'.$key->empaque.'","'.$key->procedencia.'","'.$key->inventario_inicial.'","'.$key->inventario_inicial.'","'.$key->cantidad_critica.'", now())');
+         $query = $this->db->query('INSERT INTO articulo (cod_articulo, cod_almacen, descripcion, unidad, empaque, procedencia, inventario_inicial, saldo, cantidad_critica, fecha) values(UPPER("'.$key->cod_articulo.'"),"'.$key->cod_almacen.'","'.addslashes($key->descripcion).'","'.$key->unidad.'","'.$key->empaque.'","'.$key->procedencia.'","'.$key->inventario_inicial.'","'.$key->inventario_inicial.'","'.$key->cantidad_critica.'", now())');
         return $query;
 	}
 
@@ -153,7 +154,7 @@ class Articulos_model extends CI_Model{
 		$abreviacion = $this->session->userdata('abreviacion');
 		$query_1 = $this->db->query("UPDATE articulo SET saldo = inventario_inicial");
 
-		$query_2 = $this->db->query("SELECT numero_nota, cod_articulo, saldo, cantidad FROM inventario WHERE tipo_movimiento = 'E'");
+		$query_2 = $this->db->query("SELECT numero_nota, cod_articulo, saldo, cantidad FROM inventario WHERE tipo_movimiento = 'E' ORDER BY inventario.numero_nota");
 		$resultado = $query_2->result();
 		foreach ($resultado as $key) {
 			$query_3 = $this->db->query("UPDATE inventario, articulo 
@@ -162,10 +163,11 @@ class Articulos_model extends CI_Model{
 											WHERE inventario.cod_articulo = articulo.cod_articulo
 												and inventario.cod_articulo= '$key->cod_articulo'
 												and inventario.tipo_movimiento = 'E'
-												and inventario.numero_nota = $key->numero_nota");
+												and inventario.numero_nota = $key->numero_nota
+											");
 		}
 
-		$query_4 = $this->db->query("SELECT numero_nota, cod_articulo, saldo, cantidad FROM inventario WHERE tipo_movimiento = 'S'");
+		$query_4 = $this->db->query("SELECT numero_nota, cod_articulo, saldo, cantidad FROM inventario WHERE tipo_movimiento = 'S' ORDER BY inventario.numero_nota");
 		$resultado = $query_4->result();
 		foreach ($resultado as $key) {
 			$query_5 = $this->db->query("UPDATE inventario, articulo 
@@ -174,7 +176,8 @@ class Articulos_model extends CI_Model{
 											WHERE inventario.cod_articulo = articulo.cod_articulo
 												and inventario.cod_articulo= '$key->cod_articulo'
 												and inventario.tipo_movimiento = 'S'
-												and inventario.numero_nota = $key->numero_nota");
+												and inventario.numero_nota = $key->numero_nota
+											");
 		}
 		
 		return $query_5;
@@ -201,8 +204,8 @@ class Articulos_model extends CI_Model{
 
 	public function kardex_articulo($cod_articulo){
 		$abreviacion = $this->session->userdata('abreviacion');
-		//$query = $this->db->query("SELECT inv.fecha, inv.tipo_movimiento, inv.numero_nota, (select art.descripcion from articulo art where art.cod_articulo = inv.cod_articulo) as descripcion, (IFNULL (inv.cantidad,0)) as entradas, (0) as salidas, (select art.saldo from articulo art where art.cod_articulo = inv.cod_articulo) as saldo from inventario inv where inv.cod_articulo = '$cod_articulo' and inv.tipo_movimiento = 'E' UNION SELECT inv.fecha, inv.tipo_movimiento, inv.numero_nota, (select art.descripcion from articulo art where art.cod_articulo = inv.cod_articulo) as descripcion, (0) as entradas, (IFNULL (inv.cantidad,0)) as salidas, (select art.saldo from articulo art where art.cod_articulo = inv.cod_articulo) as saldo from inventario inv where inv.cod_articulo = '$cod_articulo' and inv.tipo_movimiento = 'S' ");
-		$query = $this->db->query("SELECT inv.id_inventario, inv.fecha, inv.tipo_movimiento, inv.numero_nota, (select art.descripcion from articulo art where art.cod_articulo = inv.cod_articulo) as descripcion, (select art.inventario_inicial from articulo art where art.cod_articulo = inv.cod_articulo) as invini, (IFNULL (inv.cantidad,0)) as entradas, (0) as salidas, inv.saldo as saldo from inventario inv where inv.cod_articulo = '$cod_articulo' and inv.tipo_movimiento = 'E' UNION SELECT inv.id_inventario, inv.fecha, inv.tipo_movimiento, inv.numero_nota, (select art.descripcion from articulo art where art.cod_articulo = inv.cod_articulo) as descripcion, (select art.inventario_inicial from articulo art where art.cod_articulo = inv.cod_articulo) as invini, (0) as entradas, (IFNULL (inv.cantidad,0)) as salidas, inv.saldo as saldo from inventario inv where inv.cod_articulo = '$cod_articulo' and inv.tipo_movimiento = 'S' ORDER BY 2,3");
+		
+		$query = $this->db->query("SELECT inv.id_inventario, inv.fecha, inv.tipo_movimiento, inv.numero_nota, (select art.descripcion from articulo art where art.cod_articulo = inv.cod_articulo) as descripcion, (select art.inventario_inicial from articulo art where art.cod_articulo = inv.cod_articulo) as invini, (IFNULL (inv.cantidad,0)) as entradas, (0) as salidas, inv.saldo as saldo from inventario inv where inv.cod_articulo = '$cod_articulo' and inv.tipo_movimiento = 'E' UNION SELECT inv.id_inventario, inv.fecha, inv.tipo_movimiento, inv.numero_nota, (select art.descripcion from articulo art where art.cod_articulo = inv.cod_articulo) as descripcion, (select art.inventario_inicial from articulo art where art.cod_articulo = inv.cod_articulo) as invini, (0) as entradas, (IFNULL (inv.cantidad,0)) as salidas, inv.saldo as saldo from inventario inv where inv.cod_articulo = '$cod_articulo' and inv.tipo_movimiento = 'S' ORDER BY 3,4");
 		return $query->result();
 	}
 
