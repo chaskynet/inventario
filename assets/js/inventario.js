@@ -956,9 +956,6 @@ $(document).on('change', '#num_nota_entrada', function(){
                   +'<td id="unidad">'
                     +item.unidad
                   +'</td>'
-                  // +'<td id="empaque">'
-                  //   +item.empaque
-                  // +'</td>'
                   +'<td>'
                     +'<input type="text" id="cantidad" class="cantidad" placeholder="0" disabled=true value="'+item.cantidad+'">'
                   +'</td>'
@@ -1367,13 +1364,74 @@ $(document).on('click', '#actualizar_almacen', function(){
 
 /**
 * 
+* Desc: Seccion Buscador Existencias por almacen
+*/
+
+$(document).on('change', '#buscar_almacen', function(){
+  var almacen = $(this).val();
+  $.ajax({
+    url: 'busar_almacen',
+    data: {data: almacen},
+    type: "POST",
+    dataType: "html",
+    error: function()
+    {
+        alert('Error al Cargar!');
+    },
+    success: function(response)
+    {
+      console.log(response);
+      $("#tabla_existencias").find("tbody").empty();
+          var objeto = JSON.parse(response);
+          var cadena = '';
+          var ii = 1;
+          $.each(objeto, function(i, item) {
+            cadena += '<tr>'
+            +'<td class="centrar">'
+            +ii
+            +'</td>'
+            +'<td class="centrar_texto">'
+            +item.cod_articulo
+            +'</td>'
+            +'<td class="centrar_texto">'
+            +item.cod_almacen
+            +'</td>'
+            +'<td>'
+            +item.descripcion
+            +'</td>'
+            +'<td class="centrar_texto">'
+            +item.procedencia
+            +'</td>'
+            +'<td class="centrar_texto">'
+            +item.unidad
+            +'</td>'
+            +'<td class="centrar">'
+            +item.empaque
+            +'</td>'
+            +'<td class="cantidad_texto">'
+            +number_format(item.saldo,0)
+            +'</td>'
+            +'</tr>';
+            ii++;
+          })
+          $('#tabla_existencias tbody').append(cadena);
+    }
+  });
+})
+
+/**
+* 
 * Desc: Seccion Buscador vista principal
 */
 
 $(document).on('keyup', '#buscar', function(e){
+  var objeto = new Object();
+  objeto.valor = $(this).val();
+  objeto.almacen = $('#buscar_almacen').val();
+  dato = JSON.stringify(objeto);
 	$.ajax({
-        url: 'busca_articulo',
-        data: {data: $(this).val()},
+        url: 'busca_articulo_existencias',
+        data: {data: dato},
         type: "POST",
         dataType: "html",
         xhrFields: {
@@ -1498,10 +1556,74 @@ $(document).on('click', '#imprimir-busqueda-invini', function(){
     }
 });
 
+/**
+* 
+* Desc: Seccion Buscador Existencias por almacen
+*/
+
+$(document).on('change', '#buscar_almacen_conteo', function(){
+  var almacen = $(this).val();
+  $.ajax({
+    url: 'buscar_almacen_conteo',
+    data: {data: almacen},
+    type: "POST",
+    dataType: "html",
+    error: function()
+    {
+        alert('Error al Cargar!');
+    },
+    success: function(response)
+    {
+      console.log(response);
+      $("#tabla_conteo").find("tbody").empty();
+          var objeto = JSON.parse(response);
+          var cadena = '';
+          var ii = 1;
+          $.each(objeto, function(i, item) {
+            cadena += '<tr>'
+          +'<td>'
+          +ii
+          +'</td>'
+          +'<td class="centrar_texto">'
+          +item.cod_articulo
+          +'</td>'
+          +'<td class="centrar_texto">'
+          +item.cod_almacen
+          +'</td>'
+          +'<td>'
+          +item.descripcion
+          +'</td>'
+          +'<td class="centrar_texto">'
+          +item.unidad
+          +'</td>'
+          +'<td class="centrar_texto">'
+          +item.empaque
+          +'</td>'
+          +'<td class="centrar_texto">'
+          +item.procedencia
+          +'</td>'
+          +'<td class="cantidad_texto">'
+          +number_format(item.saldo,0)
+          +'</td>'
+          +'<td class="centrar">'
+          +'_______'
+          +'</td>'
+          +'</tr>';
+            ii++;
+          })
+          $('#tabla_conteo tbody').append(cadena);
+    }
+  });
+})
+
 $(document).on('keyup', '#buscar_para_conteo', function(e){
+  var objeto = new Object();
+  objeto.valor = $(this).val();
+  objeto.almacen = $('#buscar_almacen_conteo').val();
+  var datos = JSON.stringify(objeto);
 	$.ajax({
         url: 'busca_articulo_conteo',
-        data: {data: $(this).val()},
+        data: {data: datos},
         type: "POST",
         dataType: "html",
         xhrFields: {
@@ -1518,7 +1640,7 @@ $(document).on('keyup', '#buscar_para_conteo', function(e){
           var cadena = '';
           var ii = 1;
           $.each(objeto, function(i, item) {
-			cadena += '<tr>'
+			 cadena += '<tr>'
 					+'<td>'
 					+ii
 					+'</td>'
@@ -1583,13 +1705,82 @@ $(document).on('click', '#rep-mov-inv', function(e){
 
 /**
 *
+* Desc: Sección buscador para Movimiento de materiales por Almacen
+*
+*/
+
+$(document).on('change', '#buscar_almacen_kardex', function(e){
+    var almacen = $(this).val();
+  $.ajax({
+    url: 'busca_almacen_movimiento',
+    data: {data: almacen},
+    type: "POST",
+    dataType: "html",
+    error: function()
+    {
+        alert('Error al Cargar!');
+    },
+    success: function(response)
+    {
+      $("#tabla_movimiento").find("tbody").empty();
+          var objeto = JSON.parse(response);
+          var cadena = '';
+          var ii = 1;
+          $.each(objeto, function(i, item) {
+            cadena += '<tr  id="'+item.cod_articulo+'">'
+                +'<td>'
+                +ii
+                +'</td>'
+                +'<td class="centrar_texto">'
+                +item.cod_articulo
+                +'</td>'
+                +'<td class="centrar_texto">'
+                +item.almacen
+                +'</td>'
+                +'<td><a href="" id="kardex_articulo" data-toggle="modal" data-target="#modal_kardex_articulos">'
+                +item.descripcion
+                +'</a></td>'
+                +'<td class="centrar_texto">'
+                +item.unidad
+                +'</td>'
+                +'<td class="centrar_texto">'
+                +item.procedencia
+                +'</td>'
+                +'<td class="cantidad_texto">'
+                +number_format(item.inv_inicial, 0)
+                +'</td>'
+                +'</td>'
+                +'<td class="cantidad_texto">'
+                +number_format(item.entradas, 0)
+                +'</td>'
+                +'</td>'
+                +'<td class="cantidad_texto">'
+                +number_format(item.salidas, 0)
+                +'</td>'
+                +'</td>'
+                +'<td class="cantidad_texto">'
+                +number_format(item.saldo, 0)
+                +'</td>'
+                +'</tr>';
+          ii++;
+          });
+          $('#tabla_movimiento tbody').append(cadena);
+    }
+  });
+});
+/**
+*
 * Desc: Sección buscador para Movimiento de materiales
 *
 */
 $(document).on('keyup', '#buscar_movimiento', function(e){
+  var objeto = new Object();
+  objeto.almacen = $('#buscar_almacen_kardex').val();
+  objeto.valor = $(this).val();
+  var datos = JSON.stringify(objeto);
 	$.ajax({
         url: 'busca_articulo_movimiento',
-        data: {data: $(this).val()},
+        data: {data: datos},
         type: "POST",
         dataType: "html",
         xhrFields: {
@@ -1606,44 +1797,41 @@ $(document).on('keyup', '#buscar_movimiento', function(e){
           var cadena = '';
           var ii = 1;
           $.each(objeto, function(i, item) {
-			cadena += '<tr  id="'+item.cod_articulo+'">'
-					+'<td>'
-					+ii
-					+'</td>'
-					+'<td class="centrar_texto">'
-					+item.cod_articulo
-					+'</td>'
-          +'<td class="centrar_texto">'
-          +item.almacen
-          +'</td>'
-					+'<td><a href="" id="kardex_articulo" data-toggle="modal" data-target="#modal_kardex_articulos">'
-					+item.descripcion
-					+'</a></td>'
-					+'<td class="centrar_texto">'
-					+item.unidad
-					+'</td>'
-					// +'<td class="centrar_texto">'
-					// +item.empaque
-					// +'</td>'
-					+'<td class="centrar_texto">'
-					+item.procedencia
-					+'</td>'
-					+'<td class="cantidad_texto">'
-					+number_format(item.inv_inicial, 0)
-					+'</td>'
-					+'</td>'
-					+'<td class="cantidad_texto">'
-					+number_format(item.entradas, 0)
-					+'</td>'
-					+'</td>'
-					+'<td class="cantidad_texto">'
-					+number_format(item.salidas, 0)
-					+'</td>'
-					+'</td>'
-					+'<td class="cantidad_texto">'
-					+number_format(item.saldo, 0)
-					+'</td>'
-					+'</tr>';
+    			cadena += '<tr  id="'+item.cod_articulo+'">'
+    					+'<td>'
+    					+ii
+    					+'</td>'
+    					+'<td class="centrar_texto">'
+    					+item.cod_articulo
+    					+'</td>'
+              +'<td class="centrar_texto">'
+              +item.almacen
+              +'</td>'
+    					+'<td><a href="" id="kardex_articulo" data-toggle="modal" data-target="#modal_kardex_articulos">'
+    					+item.descripcion
+    					+'</a></td>'
+    					+'<td class="centrar_texto">'
+    					+item.unidad
+    					+'</td>'
+    					+'<td class="centrar_texto">'
+    					+item.procedencia
+    					+'</td>'
+    					+'<td class="cantidad_texto">'
+    					+number_format(item.inv_inicial, 0)
+    					+'</td>'
+    					+'</td>'
+    					+'<td class="cantidad_texto">'
+    					+number_format(item.entradas, 0)
+    					+'</td>'
+    					+'</td>'
+    					+'<td class="cantidad_texto">'
+    					+number_format(item.salidas, 0)
+    					+'</td>'
+    					+'</td>'
+    					+'<td class="cantidad_texto">'
+    					+number_format(item.saldo, 0)
+    					+'</td>'
+    					+'</tr>';
 			ii++;
 			});
           $('#tabla_movimiento tbody').append(cadena);
@@ -1777,54 +1965,4 @@ $(document).on('change', '#tabla_salidas tbody input', function(){
           }
     });
   }
-});
-
-/**********************************************/
-jQuery(document).ready(function ($) {
-  var tables = $('table.stickyHeader');
-  tables.each(function(i){
-    var table = tables[i];
-    var tableClone = $(table).clone(true).empty().removeClass('stickyHeader');
-    var theadClone = $(table).find('thead').clone(true);
-    var stickyHeader =  $('<div></div>').addClass('stickyHeader hide').attr('aria-hidden', 'true');
-    stickyHeader.append(tableClone).find('table').append(theadClone);
-    $(table).after(stickyHeader);
-    
-    var tableHeight = $(table).height();
-    var tableWidth = $(table).width() + Number($(table).css('padding-left').replace(/px/ig,"")) + Number($(table).css('padding-right').replace(/px/ig,"")) + Number($(table).css('border-left-width').replace(/px/ig,"")) + Number($(table).css('border-right-width').replace(/px/ig,""));
-    
-    var headerCells = $(table).find('thead th');
-    var headerCellHeight = $(headerCells[0]).height();
-    
-    var no_fixed_support = false;
-    if (stickyHeader.css('position') == "absolute") {
-      no_fixed_support = true;
-    }
-    
-    var stickyHeaderCells = stickyHeader.find('th');
-    stickyHeader.css('width', tableWidth);
-    var cellWidths = [];
-    for (var i = 0, l = headerCells.length; i < l; i++) {
-      cellWidths[i] = $(headerCells[i]).width();
-    }
-    for (var i = 0, l = headerCells.length; i < l; i++) {
-      $(stickyHeaderCells[i]).css('width', cellWidths[i]);
-    }
-    
-    var cutoffTop = $(table).offset().top;
-    var cutoffBottom = tableHeight + cutoffTop - headerCellHeight;
-    
-    $(window).scroll(function() { 
-    var currentPosition = $(window).scrollTop();
-      if (currentPosition > cutoffTop && currentPosition < cutoffBottom) {
-        stickyHeader.removeClass('hide');
-        if (no_fixed_support) {
-          stickyHeader.css('top', currentPosition + 'px');
-        }
-      }
-      else {
-        stickyHeader.addClass('hide');
-      }
-    });
-  });
 });

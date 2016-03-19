@@ -59,11 +59,19 @@
 			<h3>MOVIMIENTO DE INVENTARIOS</h3>
 		</div>
 			
-			<div style="float:right; margin-top: 2%; WIDTH: 25%; margin-right: 5%;">
+			<div style="float:right; margin-top: 2%; margin-right: 5%;">
 			
 				<form id="frm_pdf_main_search_movimiento" name="frm_pdf_main_search_movimiento" action="to_pdf_search_movimiento" target="_blank" method="post">
 					
 					<input type="text" id="buscar_movimiento" name="buscar_movimiento" class="form-group icono input" placeholder="Buscar" autofocus >
+					<select name="buscar_almacen_kardex" id="buscar_almacen_kardex">
+						<option value="todo">Todo</option>
+						<?php 
+							foreach ($almacenes as $key) {
+						?>
+						<option><?= $key->abreviacion;?></option>
+						<?php } ?>
+					</select>
 					<img src="../assets/images/printer2.png" alt="Imprimir" id="imprimir-busqueda-movimiento" class="imagen printer">
 					
 				</form>

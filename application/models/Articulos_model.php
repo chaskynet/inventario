@@ -8,8 +8,42 @@ class Articulos_model extends CI_Model{
 	} 
 
 	public function busca_articulo($articulo){
-		$abreviacion = $this->session->userdata('abreviacion');
+
 		$query = $this->db->query("SELECT id_articulo, cod_articulo, cod_almacen, descripcion, procedencia, unidad, empaque, inventario_inicial, cantidad_critica, saldo FROM articulo WHERE descripcion like '%$articulo%' and unidad != '-' and procedencia != '-'");
+		return $query->result();
+	}
+
+	public function busca_articulo_conteo($valor, $almacen){
+		if ($valor == "" && $almacen == "todo") {
+			$query = $this->db->query("SELECT id_articulo, cod_articulo, cod_almacen, descripcion, procedencia, unidad, empaque, inventario_inicial, cantidad_critica, saldo FROM articulo WHERE unidad != '-' and procedencia != '-'");
+		} elseif ($valor != "" && $almacen == "todo") {
+			$query = $this->db->query("SELECT id_articulo, cod_articulo, cod_almacen, descripcion, procedencia, unidad, empaque, inventario_inicial, cantidad_critica, saldo FROM articulo WHERE descripcion like '%$valor%' and unidad != '-' and procedencia != '-'");
+		} elseif ($valor != "" && $almacen != "todo") {
+			$query = $this->db->query("SELECT id_articulo, cod_articulo, cod_almacen, descripcion, procedencia, unidad, empaque, inventario_inicial, cantidad_critica, saldo FROM articulo WHERE descripcion like '%$valor%' and cod_almacen = '$almacen' and unidad != '-' and procedencia != '-'");
+		} elseif ($valor == "" && $almacen != 'todo') {
+			$query = $this->db->query("SELECT id_articulo, cod_articulo, cod_almacen, descripcion, procedencia, unidad, empaque, inventario_inicial, cantidad_critica, saldo FROM articulo WHERE cod_almacen = '$almacen' and unidad != '-' and procedencia != '-'");
+		}
+
+		return $query->result();
+	}
+
+	public function busca_articulo_existencias($articulo){
+		$datos = json_decode($articulo);
+		if ($datos->almacen == 'todo') {
+			$query = $this->db->query("SELECT id_articulo, cod_articulo, cod_almacen, descripcion, procedencia, unidad, empaque, inventario_inicial, cantidad_critica, saldo FROM articulo WHERE descripcion like '%$datos->valor%' and unidad != '-' and procedencia != '-'");
+		}else{
+			$query = $this->db->query("SELECT id_articulo, cod_articulo, cod_almacen, descripcion, procedencia, unidad, empaque, inventario_inicial, cantidad_critica, saldo FROM articulo WHERE descripcion like '%$datos->valor%' and cod_almacen = '$datos->almacen' and unidad != '-' and procedencia != '-'");
+		}
+		
+		return $query->result();
+	}
+
+	public function busca_articulo_almacen($almacen){
+		if ($almacen == 'todo') {
+			$query = $this->db->query("SELECT id_articulo, cod_articulo, cod_almacen, descripcion, procedencia, unidad, empaque, inventario_inicial, cantidad_critica, saldo FROM articulo WHERE unidad != '-' and procedencia != '-'");
+		}else{
+			$query = $this->db->query("SELECT id_articulo, cod_articulo, cod_almacen, descripcion, procedencia, unidad, empaque, inventario_inicial, cantidad_critica, saldo FROM articulo WHERE cod_almacen = '$almacen' and unidad != '-' and procedencia != '-'");
+		}
 		return $query->result();
 	}
 
@@ -196,9 +230,37 @@ class Articulos_model extends CI_Model{
 		return $query->result();
 	}
 
+	public function busca_almacen_movimiento($almacen){
+		if ($almacen == 'todo') {
+			$query = $this->db->query("SELECT distinct(inv.cod_articulo), (select art.cod_almacen from articulo art where art.cod_articulo = inv.cod_articulo) as almacen, (select art.descripcion from articulo art where art.cod_articulo = inv.cod_articulo) as descripcion, (select art.unidad from articulo art where art.cod_articulo = inv.cod_articulo) as unidad, (select art.empaque from articulo art where art.cod_articulo = inv.cod_articulo) as empaque, (select art.procedencia from articulo art where art.cod_articulo = inv.cod_articulo) as procedencia, (select art.inventario_inicial from articulo art where art.cod_articulo = inv.cod_articulo) as inv_inicial, (select IFNULL (SUM(inve.cantidad),0) from inventario inve where inve.cod_articulo = inv.cod_articulo and inve.tipo_movimiento = 'E') as entradas, (select IFNULL (SUM(inve.cantidad),0) from inventario inve where inve.cod_articulo = inv.cod_articulo and inve.tipo_movimiento = 'S') as salidas, (select art.saldo from articulo art where art.cod_articulo = inv.cod_articulo) as saldo from inventario inv WHERE inv.cod_articulo in (SELECT art.cod_articulo FROM articulo art)");
+		}else{
+			$query = $this->db->query("SELECT distinct(inv.cod_articulo), (select art.cod_almacen from articulo art where art.cod_articulo = inv.cod_articulo) as almacen, (select art.descripcion from articulo art where art.cod_articulo = inv.cod_articulo) as descripcion, (select art.unidad from articulo art where art.cod_articulo = inv.cod_articulo) as unidad, (select art.empaque from articulo art where art.cod_articulo = inv.cod_articulo) as empaque, (select art.procedencia from articulo art where art.cod_articulo = inv.cod_articulo) as procedencia, (select art.inventario_inicial from articulo art where art.cod_articulo = inv.cod_articulo) as inv_inicial, (select IFNULL (SUM(inve.cantidad),0) from inventario inve where inve.cod_articulo = inv.cod_articulo and inve.tipo_movimiento = 'E') as entradas, (select IFNULL (SUM(inve.cantidad),0) from inventario inve where inve.cod_articulo = inv.cod_articulo and inve.tipo_movimiento = 'S') as salidas, (select art.saldo from articulo art where art.cod_articulo = inv.cod_articulo) as saldo from inventario inv WHERE inv.cod_articulo in (SELECT art.cod_articulo FROM articulo art where art.cod_almacen = '$almacen')");
+			
+		}
+		return $query->result();
+	}
+
 	public function busca_articulo_movimiento($articulo){
-		$abreviacion = $this->session->userdata('abreviacion');
-		$query = $this->db->query("SELECT distinct(inv.cod_articulo), (select art.cod_almacen from articulo art where art.cod_articulo = inv.cod_articulo) as almacen, (select art.descripcion from articulo art where art.cod_articulo = inv.cod_articulo) as descripcion, (select art.unidad from articulo art where art.cod_articulo = inv.cod_articulo) as unidad, (select art.empaque from articulo art where art.cod_articulo = inv.cod_articulo) as empaque, (select art.procedencia from articulo art where art.cod_articulo = inv.cod_articulo) as procedencia, (select art.inventario_inicial from articulo art where art.cod_articulo = inv.cod_articulo) as inv_inicial, (select IFNULL (SUM(inve.cantidad),0) from inventario inve where inve.cod_articulo = inv.cod_articulo and inve.tipo_movimiento = 'E') as entradas, (select IFNULL (SUM(inve.cantidad),0) from inventario inve where inve.cod_articulo = inv.cod_articulo and inve.tipo_movimiento = 'S') as salidas, (select art.saldo from articulo art where art.cod_articulo = inv.cod_articulo) as saldo from inventario inv WHERE inv.cod_articulo in (SELECT art.cod_articulo FROM articulo art where art.descripcion like '%$articulo%')");
+		$datos = json_decode($articulo);
+		if ($datos->almacen == 'todo') {
+			$query = $this->db->query("SELECT distinct(inv.cod_articulo), (select art.cod_almacen from articulo art where art.cod_articulo = inv.cod_articulo) as almacen, (select art.descripcion from articulo art where art.cod_articulo = inv.cod_articulo) as descripcion, (select art.unidad from articulo art where art.cod_articulo = inv.cod_articulo) as unidad, (select art.empaque from articulo art where art.cod_articulo = inv.cod_articulo) as empaque, (select art.procedencia from articulo art where art.cod_articulo = inv.cod_articulo) as procedencia, (select art.inventario_inicial from articulo art where art.cod_articulo = inv.cod_articulo) as inv_inicial, (select IFNULL (SUM(inve.cantidad),0) from inventario inve where inve.cod_articulo = inv.cod_articulo and inve.tipo_movimiento = 'E') as entradas, (select IFNULL (SUM(inve.cantidad),0) from inventario inve where inve.cod_articulo = inv.cod_articulo and inve.tipo_movimiento = 'S') as salidas, (select art.saldo from articulo art where art.cod_articulo = inv.cod_articulo) as saldo from inventario inv WHERE inv.cod_articulo in (SELECT art.cod_articulo FROM articulo art where art.descripcion like '%$datos->valor%')");
+			
+		}else{
+			$query = $this->db->query("SELECT distinct(inv.cod_articulo), (select art.cod_almacen from articulo art where art.cod_articulo = inv.cod_articulo) as almacen, (select art.descripcion from articulo art where art.cod_articulo = inv.cod_articulo) as descripcion, (select art.unidad from articulo art where art.cod_articulo = inv.cod_articulo) as unidad, (select art.empaque from articulo art where art.cod_articulo = inv.cod_articulo) as empaque, (select art.procedencia from articulo art where art.cod_articulo = inv.cod_articulo) as procedencia, (select art.inventario_inicial from articulo art where art.cod_articulo = inv.cod_articulo) as inv_inicial, (select IFNULL (SUM(inve.cantidad),0) from inventario inve where inve.cod_articulo = inv.cod_articulo and inve.tipo_movimiento = 'E') as entradas, (select IFNULL (SUM(inve.cantidad),0) from inventario inve where inve.cod_articulo = inv.cod_articulo and inve.tipo_movimiento = 'S') as salidas, (select art.saldo from articulo art where art.cod_articulo = inv.cod_articulo) as saldo from inventario inv WHERE inv.cod_articulo in (SELECT art.cod_articulo FROM articulo art where art.descripcion like '%$datos->valor%' and art.cod_almacen = '$datos->almacen')");
+		}
+		return $query->result();
+	}
+
+	public function busca_articulo_movimiento_pdf($valor, $almacen){
+		if ($valor == "" && $almacen == "todo") {
+			$query = $this->db->query("SELECT distinct(inv.cod_articulo), (select art.cod_almacen from articulo art where art.cod_articulo = inv.cod_articulo) as almacen, (select art.descripcion from articulo art where art.cod_articulo = inv.cod_articulo) as descripcion, (select art.unidad from articulo art where art.cod_articulo = inv.cod_articulo) as unidad, (select art.empaque from articulo art where art.cod_articulo = inv.cod_articulo) as empaque, (select art.procedencia from articulo art where art.cod_articulo = inv.cod_articulo) as procedencia, (select art.inventario_inicial from articulo art where art.cod_articulo = inv.cod_articulo) as inv_inicial, (select IFNULL (SUM(inve.cantidad),0) from inventario inve where inve.cod_articulo = inv.cod_articulo and inve.tipo_movimiento = 'E') as entradas, (select IFNULL (SUM(inve.cantidad),0) from inventario inve where inve.cod_articulo = inv.cod_articulo and inve.tipo_movimiento = 'S') as salidas, (select art.saldo from articulo art where art.cod_articulo = inv.cod_articulo) as saldo from inventario inv WHERE inv.cod_articulo in (SELECT art.cod_articulo FROM articulo art)");
+		} elseif ($valor != "" && $almacen == "todo") {
+			$query = $this->db->query("SELECT distinct(inv.cod_articulo), (select art.cod_almacen from articulo art where art.cod_articulo = inv.cod_articulo) as almacen, (select art.descripcion from articulo art where art.cod_articulo = inv.cod_articulo) as descripcion, (select art.unidad from articulo art where art.cod_articulo = inv.cod_articulo) as unidad, (select art.empaque from articulo art where art.cod_articulo = inv.cod_articulo) as empaque, (select art.procedencia from articulo art where art.cod_articulo = inv.cod_articulo) as procedencia, (select art.inventario_inicial from articulo art where art.cod_articulo = inv.cod_articulo) as inv_inicial, (select IFNULL (SUM(inve.cantidad),0) from inventario inve where inve.cod_articulo = inv.cod_articulo and inve.tipo_movimiento = 'E') as entradas, (select IFNULL (SUM(inve.cantidad),0) from inventario inve where inve.cod_articulo = inv.cod_articulo and inve.tipo_movimiento = 'S') as salidas, (select art.saldo from articulo art where art.cod_articulo = inv.cod_articulo) as saldo from inventario inv WHERE inv.cod_articulo in (SELECT art.cod_articulo FROM articulo art where art.descripcion like '%$valor%')");
+		} elseif ($valor != "" && $almacen != "todo") {
+			$query = $this->db->query("SELECT distinct(inv.cod_articulo), (select art.cod_almacen from articulo art where art.cod_articulo = inv.cod_articulo) as almacen, (select art.descripcion from articulo art where art.cod_articulo = inv.cod_articulo) as descripcion, (select art.unidad from articulo art where art.cod_articulo = inv.cod_articulo) as unidad, (select art.empaque from articulo art where art.cod_articulo = inv.cod_articulo) as empaque, (select art.procedencia from articulo art where art.cod_articulo = inv.cod_articulo) as procedencia, (select art.inventario_inicial from articulo art where art.cod_articulo = inv.cod_articulo) as inv_inicial, (select IFNULL (SUM(inve.cantidad),0) from inventario inve where inve.cod_articulo = inv.cod_articulo and inve.tipo_movimiento = 'E') as entradas, (select IFNULL (SUM(inve.cantidad),0) from inventario inve where inve.cod_articulo = inv.cod_articulo and inve.tipo_movimiento = 'S') as salidas, (select art.saldo from articulo art where art.cod_articulo = inv.cod_articulo) as saldo from inventario inv WHERE inv.cod_articulo in (SELECT art.cod_articulo FROM articulo art where art.descripcion like '%$valor%' and art.cod_almacen = '$almacen')");
+		} elseif ($valor == "" && $almacen != 'todo') {
+			$query = $this->db->query("SELECT distinct(inv.cod_articulo), (select art.cod_almacen from articulo art where art.cod_articulo = inv.cod_articulo) as almacen, (select art.descripcion from articulo art where art.cod_articulo = inv.cod_articulo) as descripcion, (select art.unidad from articulo art where art.cod_articulo = inv.cod_articulo) as unidad, (select art.empaque from articulo art where art.cod_articulo = inv.cod_articulo) as empaque, (select art.procedencia from articulo art where art.cod_articulo = inv.cod_articulo) as procedencia, (select art.inventario_inicial from articulo art where art.cod_articulo = inv.cod_articulo) as inv_inicial, (select IFNULL (SUM(inve.cantidad),0) from inventario inve where inve.cod_articulo = inv.cod_articulo and inve.tipo_movimiento = 'E') as entradas, (select IFNULL (SUM(inve.cantidad),0) from inventario inve where inve.cod_articulo = inv.cod_articulo and inve.tipo_movimiento = 'S') as salidas, (select art.saldo from articulo art where art.cod_articulo = inv.cod_articulo) as saldo from inventario inv WHERE inv.cod_articulo in (SELECT art.cod_articulo FROM articulo art where art.cod_almacen = '$almacen')");
+		}
 		return $query->result();
 	}
 

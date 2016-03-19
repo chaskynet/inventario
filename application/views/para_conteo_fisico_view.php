@@ -8,13 +8,21 @@
 				<div style="float:left;">
 					<h3>CONTEO FISICO</h3>
 				</div>
-				<div style="float:right; margin-top: 2%; WIDTH: 25%; margin-right: 5%;">
+				<div style="float:right; margin-top: 2%; margin-right: 5%;">
 					<!--div style="float:left;">
 						<input type="text" id="buscar_para_conteo" name="buscar_para_conteo" class="form-group icono input" placeholder="Buscar" autofocus >
 					</div-->
 					<form id="frm_pdf_main_search_conteo" name="frm_pdf_main_search_conteo" action="to_pdf_search_conteo" target="_blank" method="post">
 						
 						<input type="text" id="buscar_para_conteo" name="buscar_para_conteo" class="form-group icono input" placeholder="Buscar" autofocus >
+						<select name="buscar_almacen_conteo" id="buscar_almacen_conteo">
+							<option value="todo">Todo</option>
+							<?php 
+								foreach ($almacenes as $key) {
+							?>
+							<option><?= $key->abreviacion;?></option>
+							<?php } ?>
+						</select>
 						<img src="../assets/images/printer2.png" alt="Imprimir" id="imprimir-busqueda-conteo" class="imagen printer">
 						<!--img src="../assets/images/lupa.png" alt="Buscar" class="imagen"-->
 						

@@ -13,13 +13,21 @@
 					<input type="checkbox">Almacen</input>
 				</div> -->
 
-				<div style="float:right; margin-top: 2%; WIDTH: 25%; margin-right: 5%;">
+				<div style="float:right; margin-top: 2%; margin-right: 5%;">
 					<!--div style="float:left;">
 						<input type="text" id="buscar_para_conteo" name="buscar_para_conteo" class="form-group icono input" placeholder="Buscar" autofocus >
 					</div-->
 					<form id="frm_pdf_main_search" name="frm_pdf_main_search" action="to_pdf_main_search" target="_blank" method="post">
-						
+						<!-- <label for="almacen">Almacen:</label> -->
 						<input type="text" id="buscar" name="buscar" class="form-group icono input" placeholder="Buscar" autofocus >
+						<select name="buscar_almacen" id="buscar_almacen">
+							<option value="todo">Todo</option>
+							<?php 
+								foreach ($almacenes as $key) {
+							?>
+							<option><?= $key->abreviacion;?></option>
+							<?php } ?>
+						</select>
 						<img src="../assets/images/printer2.png" alt="Imprimir" id="imprimir-busqueda" class="imagen printer">
 						<!--img src="../assets/images/lupa.png" alt="Buscar" class="imagen"-->
 						

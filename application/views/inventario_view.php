@@ -201,20 +201,20 @@
 	<?php } ?>
 	<h2>&nbsp;</h2>
 	<div class="span12">
-			<!-- <h3>Inventario</h3> -->
-			<!-- <button class="btn" id="agregar-articulos" data-toggle="modal" data-target="#modal_importa_articulos" style="margin-right:5%;">Importar Artículos</button> -->
-			
-			<?php if(in_array('chk_importa_art', $this->session->userdata('permisos'))){ ?>
-				<a href="" id="agregar-articulos" data-toggle="modal" data-target="#modal_importa_articulos" style="margin-right:5%;">Importar Artículos</a>
-				<a href="<?= base_url(); ?>assets/files/template.xls" style="margin-right:5%;">Descargar Plantilla</a>
-			<?php } 
-				if(in_array('chk_crea_art', $this->session->userdata('permisos'))){ 
-			?>
-				<a href="" id="nuevo-articulo" data-toggle="modal" data-target="#modal_nuevo_articulo">Nuevo Artículo</a>
-			<?php } 
-				 if(in_array('chk_modifica', $this->session->userdata('permisos'))){ ?>
-				<a href="" id="actualizar-articulos" style="margin-left: 5%;">Actualizar</a>
-			<?php } ?>
+		<!-- <h3>Inventario</h3> -->
+		<!-- <button class="btn" id="agregar-articulos" data-toggle="modal" data-target="#modal_importa_articulos" style="margin-right:5%;">Importar Artículos</button> -->
+		
+		<?php if(in_array('chk_importa_art', $this->session->userdata('permisos'))){ ?>
+			<a href="" id="agregar-articulos" data-toggle="modal" data-target="#modal_importa_articulos" style="margin-right:5%;">Importar Artículos</a>
+			<a href="<?= base_url(); ?>assets/files/template.xls" style="margin-right:5%;">Descargar Plantilla</a>
+		<?php } 
+			if(in_array('chk_crea_art', $this->session->userdata('permisos'))){ 
+		?>
+			<a href="" id="nuevo-articulo" data-toggle="modal" data-target="#modal_nuevo_articulo">Nuevo Artículo</a>
+		<?php } 
+			 if(in_array('chk_modifica', $this->session->userdata('permisos'))){ ?>
+			<a href="" id="actualizar-articulos" style="margin-left: 5%;">Actualizar</a>
+		<?php } ?>
 		<div style="float:right; margin-top: 0%; width: 25%; margin-right: 5%;">
 			<form id="frm_pdf_main_search_invini" name="frm_pdf_main_search_invini" action="to_pdf_search_invini" target="_blank" method="post">
 				<input type="text" id="buscar_invini" name="buscar_invini" class="form-group icono input" placeholder="Buscar" autofocus >
@@ -223,7 +223,7 @@
 		</div>
 		<div class="container">
 		<div class="row">
-			<table id="tabla_invini" class="table table-condensed table-striped resaltado cabecera stickyheader">
+			<table id="tabla_invini" class="table table-condensed table-striped resaltado cabecera">
 				<thead>
 					<tr>
 						<th>#</th>

@@ -229,6 +229,14 @@ class Main extends CI_Controller
 		}
 	}
 
+	public function busca_articulo_existencias(){
+		if ($this->session->userdata('is_logged_in')){
+			$articulos = $this->Articulos_model->busca_articulo_existencias($_POST['data']);
+			echo json_encode($articulos);
+		} else{
+			redirect('main/restringido');
+		}
+	}
 	/**
 	*
 	*
@@ -353,10 +361,8 @@ class Main extends CI_Controller
 			$mpdf = new mPDF('utf-8', 'Letter');
 			$data['usuario'] = $this->session->userdata('usuario');
 			$data['fecha'] = date('d/m/Y');
-			$data['datos_main_search'] = $this->Articulos_model->busca_articulo($this->input->post('buscar'));
-			//
+			$data['datos_main_search'] = $this->Articulos_model->busca_articulo_conteo($this->input->post('buscar'),  $this->input->post('buscar_almacen'));
 			$mpdf->setFooter('{PAGENO}');
-			//
 			$mpdf->WriteHTML($this->load->view('pdf_main_search', $data, true));
 			ob_clean();
 			$mpdf->Output();
@@ -400,10 +406,9 @@ class Main extends CI_Controller
 			$mpdf = new mPDF('utf-8', 'Letter');
 			$data['usuario'] = $this->session->userdata('usuario');
 			$data['fecha'] = date('d/m/Y');
-			$data['datos_main_search'] = $this->Articulos_model->busca_articulo($this->input->post('buscar_para_conteo'));
-			//
+
+			$data['datos_main_search'] = $this->Articulos_model->busca_articulo_conteo($this->input->post('buscar_para_conteo'),  $this->input->post('buscar_almacen_conteo'));
 			$mpdf->setHeader('{PAGENO}');
-			//
 			$mpdf->WriteHTML($this->load->view('pdf_search_conteo', $data, true));
 			ob_clean();
 			$mpdf->Output();
@@ -423,7 +428,7 @@ class Main extends CI_Controller
 			$mpdf = new mPDF('utf-8', 'Letter');
 			$data['usuario'] = $this->session->userdata('usuario');
 			$data['fecha'] = date('d/m/Y');
-			$data['datos_main_search'] = $this->Articulos_model->busca_articulo_movimiento($this->input->post('buscar_para_movimiento'));
+			$data['datos_main_search'] = $this->Articulos_model->busca_articulo_movimiento_pdf($this->input->post('buscar_movimiento'), $this->input->post('buscar_almacen_kardex'));
 			//
 			$mpdf->setHeader('{PAGENO}');
 			//
@@ -666,9 +671,22 @@ class Main extends CI_Controller
 	**/
 	public function rep_conteo_fisico(){
 		if ($this->session->userdata('is_logged_in')){
-			$this->load->model('Articulos_model');		
+			$this->load->model('Articulos_model');	
 			$articulos['conteo'] = $this->Articulos_model->paraconteo_fisico();
+
+			$this->load->model('Almacenes_model');
+			$articulos['almacenes'] = $this->Almacenes_model->codigo_almacen();
+			
 			$this->load->view('para_conteo_fisico_view', $articulos);
+		} else{
+			redirect('main/restringido');
+		}
+	}
+
+	public function buscar_almacen_conteo(){
+		if ($this->session->userdata('is_logged_in')){
+			$articulos = $this->Articulos_model->busca_articulo_almacen($_POST['data']);
+			echo json_encode($articulos);
 		} else{
 			redirect('main/restringido');
 		}
@@ -676,7 +694,7 @@ class Main extends CI_Controller
 
 	public function busca_articulo_conteo(){
 		if ($this->session->userdata('is_logged_in')){
-			$articulos = $this->Articulos_model->busca_articulo($_POST['data']);
+			$articulos = $this->Articulos_model->busca_articulo_existencias($_POST['data']);
 			echo json_encode($articulos);
 		} else{
 			redirect('main/restringido');
@@ -691,6 +709,10 @@ class Main extends CI_Controller
 		if ($this->session->userdata('is_logged_in')){
 			$this->load->model('Articulos_model');
 			$articulos['movimiento'] = $this->Articulos_model->movimiento_inventario();
+
+			$this->load->model('Almacenes_model');
+			$articulos['almacenes'] = $this->Almacenes_model->codigo_almacen();
+
 			$this->load->view('movimiento_inventario_view', $articulos);
 		} else{
 			redirect('main/restringido');
@@ -731,7 +753,31 @@ class Main extends CI_Controller
 	public function existencias(){
 		if ($this->session->userdata('is_logged_in')){
 			$data['existencias'] = $this->Articulos_model->lista_inventario();
+			$this->load->model('Almacenes_model');
+			$data['almacenes'] = $this->Almacenes_model->codigo_almacen();
 			$this->load->view('existencias_view', $data);
+		} else{
+			redirect('main/restringido');
+		}
+	}
+
+	public function busar_almacen(){
+		if ($this->session->userdata('is_logged_in')){
+			$articulos = $this->Articulos_model->busca_articulo_almacen($_POST['data']);
+			echo json_encode($articulos);
+		} else{
+			redirect('main/restringido');
+		}
+	}
+
+	/**
+	*
+	*
+	**/
+	public function busca_almacen_movimiento(){
+		if ($this->session->userdata('is_logged_in')){
+			$articulos = $this->Articulos_model->busca_almacen_movimiento($_POST['data']);
+			echo json_encode($articulos);
 		} else{
 			redirect('main/restringido');
 		}
