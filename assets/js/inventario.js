@@ -135,7 +135,7 @@ $(document).on('click', '#sacarProducto', function(){
 */
 $(document).on('click', '#nueva-salida', function(e){
   e.preventDefault();
-  $('#contenido').load('carga_salida');
+  //$('#contenido').load('carga_salida');
 	$.ajax({
             url: 'numero_nota',
             data: {data:'S'},
@@ -175,7 +175,7 @@ $(document).on('click', '#nueva-salida', function(e){
 $(document).on('click', '#nueva-entrada', function(e){
   e.preventDefault();
   //data-toggle="modal" data-target="#modal_añadir_articulos"
-  $('#contenido').load('carga_entrada');
+  //$('#contenido').load('carga_entrada');
   
 	$.ajax({
             url: 'numero_nota',
