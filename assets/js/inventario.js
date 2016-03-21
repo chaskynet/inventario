@@ -523,7 +523,7 @@ $(document).on('change', '#num_nota_salida', function(){
                       //   +item.empaque
                       // +'</td>'
                       +'<td>'
-                        +'<input type="text" id="cantidad" class="cantidad" placeholder="0" disabled=true value="'+item.cantidad+'">'
+                        +'<input type="text" id="cantidad" class="cantidad" placeholder="0" disabled=true value="'+number_format(item.cantidad,0)+'">'
                       +'</td>'
           					+'</tr>';
           			})
@@ -925,7 +925,7 @@ $(document).on('change', '#num_nota_entrada', function(){
         },
         success: function(response)
         {
-          console.log(response);
+          
           $("#tabla_salidas").find("tbody").empty();
           $('#tabla_salidas tbody').empty();
 
@@ -957,7 +957,7 @@ $(document).on('change', '#num_nota_entrada', function(){
                     +item.unidad
                   +'</td>'
                   +'<td>'
-                    +'<input type="text" id="cantidad" class="cantidad" placeholder="0" disabled=true value="'+item.cantidad+'">'
+                    +'<input type="text" id="cantidad" class="cantidad" placeholder="0" disabled=true value="'+number_format(item.cantidad,0)+'">'
                   +'</td>'
 			            +'</tr>';
 				})
@@ -1368,10 +1368,13 @@ $(document).on('click', '#actualizar_almacen', function(){
 */
 
 $(document).on('change', '#buscar_almacen', function(){
-  var almacen = $(this).val();
+  var objeto = new Object();
+  objeto.valor = $('#buscar').val();
+  objeto.almacen = $(this).val();
+  var nuevo_objeto = JSON.stringify(objeto);
   $.ajax({
     url: 'busar_almacen',
-    data: {data: almacen},
+    data: {data: nuevo_objeto},
     type: "POST",
     dataType: "html",
     error: function()
@@ -1631,10 +1634,13 @@ $(document).on('click', '#imprimir-busqueda-invini', function(){
 */
 
 $(document).on('change', '#buscar_almacen_conteo', function(){
-  var almacen = $(this).val();
+  var objeto = new Object();
+  objeto.almacen = $(this).val();
+  objeto.valor = $('#buscar_para_conteo').val();
+  var nuevo_objeto = JSON.stringify(objeto);
   $.ajax({
     url: 'buscar_almacen_conteo',
-    data: {data: almacen},
+    data: {data: nuevo_objeto},
     type: "POST",
     dataType: "html",
     error: function()
@@ -1643,7 +1649,6 @@ $(document).on('change', '#buscar_almacen_conteo', function(){
     },
     success: function(response)
     {
-      console.log(response);
       $("#tabla_conteo").find("tbody").empty();
           var objeto = JSON.parse(response);
           var cadena = '';

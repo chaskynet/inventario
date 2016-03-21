@@ -701,7 +701,10 @@ class Main extends CI_Controller
 
 	public function buscar_almacen_conteo(){
 		if ($this->session->userdata('is_logged_in')){
-			$articulos = $this->Articulos_model->busca_articulo_almacen($_POST['data']);
+			$datos = json_decode($_POST['data']);
+			$almacen = $datos->almacen;
+			$valor = $datos->valor;
+			$articulos = $this->Articulos_model->busca_articulo_conteo($valor, $almacen);
 			echo json_encode($articulos);
 		} else{
 			redirect('main/restringido');
@@ -779,7 +782,11 @@ class Main extends CI_Controller
 
 	public function busar_almacen(){
 		if ($this->session->userdata('is_logged_in')){
-			$articulos = $this->Articulos_model->busca_articulo_almacen($_POST['data']);
+			$datos = json_decode($_POST['data']);
+			$almacen = $datos->almacen;
+			$valor = $datos->valor;
+			$articulos = $this->Articulos_model->busca_articulo_conteo($valor, $almacen);
+			//$articulos = $this->Articulos_model->busca_articulo_almacen();
 			echo json_encode($articulos);
 		} else{
 			redirect('main/restringido');
