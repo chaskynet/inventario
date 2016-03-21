@@ -112,9 +112,10 @@ class Main extends CI_Controller
 	*
 	*/
 	public function carga_inventario(){
-		if ($this->session->userdata('is_logged_in')){
-			
+		if ($this->session->userdata('is_logged_in')){			
 			$articulos['articulo'] = $this->Articulos_model->lista_inventario();
+			$this->load->model('Almacenes_model');
+			$articulos['almacenes'] = $this->Almacenes_model->codigo_almacen();
 			$this->load->view('inventario_view', $articulos);
 		} else{
 			redirect('main/restringido');
@@ -223,6 +224,23 @@ class Main extends CI_Controller
 	public function busca_articulo(){
 		if ($this->session->userdata('is_logged_in')){
 			$articulos = $this->Articulos_model->busca_articulo($_POST['data']);
+			echo json_encode($articulos);
+		} else{
+			redirect('main/restringido');
+		}
+	}
+	public function buscar_almacen_invi(){
+		if ($this->session->userdata('is_logged_in')){
+			$articulos = $this->Articulos_model->buscar_almacen_invi($_POST['data']);
+			echo json_encode($articulos);
+		} else{
+			redirect('main/restringido');
+		}
+	}
+
+	public function busca_articulo_invi(){
+		if ($this->session->userdata('is_logged_in')){
+			$articulos = $this->Articulos_model->busca_articulo_invi($_POST['data']);
 			echo json_encode($articulos);
 		} else{
 			redirect('main/restringido');
@@ -383,10 +401,8 @@ class Main extends CI_Controller
 
 			$data['usuario'] = $this->session->userdata('usuario');
 			$data['fecha'] = date('d/m/Y');
-			$data['datos_main_search'] = $this->Articulos_model->busca_articulo($this->input->post('buscar_invini'));
-			//
+			$data['datos_main_search'] = $this->Articulos_model->busca_articulo_conteo($this->input->post('buscar_invini'),  $this->input->post('buscar_almacen_invi'));
 			$mpdf->setHeader('{PAGENO}');
-			//
 			$mpdf->WriteHTML($this->load->view('pdf_search_invini', $data, true));
 			ob_clean();
 			$mpdf->Output();

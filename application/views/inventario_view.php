@@ -201,9 +201,6 @@
 	<?php } ?>
 	<h2>&nbsp;</h2>
 	<div class="span12">
-		<!-- <h3>Inventario</h3> -->
-		<!-- <button class="btn" id="agregar-articulos" data-toggle="modal" data-target="#modal_importa_articulos" style="margin-right:5%;">Importar Artículos</button> -->
-		
 		<?php if(in_array('chk_importa_art', $this->session->userdata('permisos'))){ ?>
 			<a href="" id="agregar-articulos" data-toggle="modal" data-target="#modal_importa_articulos" style="margin-right:5%;">Importar Artículos</a>
 			<a href="<?= base_url(); ?>assets/files/template.xls" style="margin-right:5%;">Descargar Plantilla</a>
@@ -215,9 +212,17 @@
 			 if(in_array('chk_modifica', $this->session->userdata('permisos'))){ ?>
 			<a href="" id="actualizar-articulos" style="margin-left: 5%;">Actualizar</a>
 		<?php } ?>
-		<div style="float:right; margin-top: 0%; width: 25%; margin-right: 5%;">
+		<div style="float:right; margin-top: 0%;margin-right: 5%;">
 			<form id="frm_pdf_main_search_invini" name="frm_pdf_main_search_invini" action="to_pdf_search_invini" target="_blank" method="post">
 				<input type="text" id="buscar_invini" name="buscar_invini" class="form-group icono input" placeholder="Buscar" autofocus >
+				<select name="buscar_almacen_invi" id="buscar_almacen_invi">
+					<option value="todo">Todo</option>
+					<?php 
+						foreach ($almacenes as $key) {
+					?>
+					<option><?= $key->abreviacion;?></option>
+					<?php } ?>
+				</select>
 				<img src="../assets/images/printer2.png" alt="Imprimir" id="imprimir-busqueda-invini" class="imagen printer">
 			</form>
 		</div>
@@ -259,10 +264,8 @@
 						<td class="centrar"><?= $key->unidad; ?></td>
 						<td class="centrar"><?= $key->empaque; ?></td>
 						<td class="centrar"><?= $key->procedencia; ?></td>
-						<!-- <td><?= $key->fecha; ?></td> -->
 						<td class="cantidad_texto"><?= ($key->cantidad_critica == 0 ? '-': number_format($key->cantidad_critica,0,".",",")); ?></td>
 						<td class="cantidad_texto"><?= ($key->inventario_inicial == 0 ? '-' : number_format($key->inventario_inicial,0,".",",")); ?></td>
-						<!-- <td class="cantidad_texto"><?= $key->saldo; ?></td> -->
 					</tr>
 				<?php
 					}

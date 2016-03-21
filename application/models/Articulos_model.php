@@ -13,6 +13,31 @@ class Articulos_model extends CI_Model{
 		return $query->result();
 	}
 
+	public function buscar_almacen_invi($almacen){
+		$datos = json_decode($almacen);
+		if ($datos->almacen =='todo' && $datos->valor != '') {
+			$query = $this->db->query("SELECT id_articulo, cod_articulo, cod_almacen, descripcion, procedencia, unidad, empaque, inventario_inicial, cantidad_critica, saldo FROM articulo WHERE descripcion like '%$datos->valor%' and unidad != '-' and procedencia != '-'");
+		} elseif($datos->almacen !='todo' && $datos->valor != ''){
+			$query = $this->db->query("SELECT id_articulo, cod_articulo, cod_almacen, descripcion, procedencia, unidad, empaque, inventario_inicial, cantidad_critica, saldo FROM articulo WHERE cod_almacen = '$datos->almacen' and descripcion like '%$datos->valor%' and unidad != '-' and procedencia != '-'");
+		} elseif($datos->almacen =='todo' && $datos->valor == ''){
+			$query = $this->db->query("SELECT id_articulo, cod_articulo, cod_almacen, descripcion, procedencia, unidad, empaque, inventario_inicial, cantidad_critica, saldo FROM articulo WHERE unidad != '-' and procedencia != '-'");
+		} elseif($datos->almacen !='todo' && $datos->valor == ''){
+			$query = $this->db->query("SELECT id_articulo, cod_articulo, cod_almacen, descripcion, procedencia, unidad, empaque, inventario_inicial, cantidad_critica, saldo FROM articulo WHERE cod_almacen = '$datos->almacen' and unidad != '-' and procedencia != '-'");
+		}
+		return $query->result();
+	}
+
+	public function busca_articulo_invi($datos){
+		$datos = json_decode($datos);
+		if ($datos->almacen =='todo') {
+			$query = $this->db->query("SELECT id_articulo, cod_articulo, cod_almacen, descripcion, procedencia, unidad, empaque, inventario_inicial, cantidad_critica, saldo FROM articulo WHERE descripcion like '%$datos->valor%' and unidad != '-' and procedencia != '-'");
+		} else{
+
+			$query = $this->db->query("SELECT id_articulo, cod_articulo, cod_almacen, descripcion, procedencia, unidad, empaque, inventario_inicial, cantidad_critica, saldo FROM articulo WHERE descripcion like '%$datos->valor%' and cod_almacen = '$datos->almacen' and unidad != '-' and procedencia != '-'");
+		}
+		return $query->result();
+	}
+
 	public function busca_articulo_conteo($valor, $almacen){
 		if ($valor == "" && $almacen == "todo") {
 			$query = $this->db->query("SELECT id_articulo, cod_articulo, cod_almacen, descripcion, procedencia, unidad, empaque, inventario_inicial, cantidad_critica, saldo FROM articulo WHERE unidad != '-' and procedencia != '-'");

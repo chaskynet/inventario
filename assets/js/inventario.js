@@ -1482,9 +1482,78 @@ $(document).on('keyup', '#buscar', function(e){
 });
 
 $(document).on('keyup', '#buscar_invini', function(e){
+  var objeto = new Object();
+  objeto.almacen = $('#buscar_almacen_invi').val();
+  objeto.valor = $(this).val();
+  var nuevo_objeto = JSON.stringify(objeto);
   $.ajax({
-        url: 'busca_articulo',
-        data: {data: $(this).val()},
+        url: 'busca_articulo_invi',
+        data: {data: nuevo_objeto},
+        type: "POST",
+        error: function()
+        {
+            alert('Error al Buscar!');
+        },
+        success: function(response)
+        {
+          $("#tabla_invini").find("tbody").empty();
+          var objeto = JSON.parse(response);
+          var cadena = '';
+          var ii = 1;
+          var permisos =  $('#roles').val();
+          
+
+          $.each(objeto, function(i, item) {
+          if ( permisos == 'tiene')  {
+              var descripcion = '<a href="#" data-toggle="modal" data-target="#modal_resumen_movimientos" id="articulo">'+item.descripcion+'</a>';
+
+          } else {
+              var descripcion = item.descripcion; 
+          }
+          cadena += '<tr id="'+item.id_articulo+'">'
+          +'<td class="centrar">'
+          +ii
+          +'</td>'
+          +'<td class="centrar">'
+          +item.cod_articulo
+          +'</td>'
+          +'<td class="centrar">'
+          +item.cod_almacen
+          +'</td>'
+          +'<td>'
+          +descripcion
+          +'</td>'
+          +'<td class="centrar">'
+          +item.unidad
+          +'</td>'
+          +'<td class="centrar">'
+          +item.empaque
+          +'</td>'
+          +'<td class="centrar">'
+          +item.procedencia
+          +'</td>'
+          +'<td class="cantidad_texto">'
+          +item.cantidad_critica
+          +'</td>'
+          +'<td class="cantidad_texto">'
+          +number_format(item.inventario_inicial,0)
+          +'</td>'
+          +'</tr>';
+          ii++;
+      })
+          $('#tabla_invini tbody').append(cadena);
+        }
+      });
+});
+
+$(document).on('change', '#buscar_almacen_invi', function(e){
+  var objeto = new Object();
+  objeto.valor = $('#buscar_invini').val();
+  objeto.almacen = $(this).val();
+  var nuevo_objeto = JSON.stringify(objeto);
+  $.ajax({
+        url: 'buscar_almacen_invi',
+        data: {data: nuevo_objeto},
         type: "POST",
         
         error: function()

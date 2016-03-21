@@ -86,13 +86,11 @@
 				<th>Almacen</th>
 				<th>Descripción</th>
 				<th>Unidad</th>
-				<!-- <th>Empaque</th> -->
 				<th>Procedencia</th>
 				<th>Inv. Inicial</th>
 				<th>Entradas</th>
 				<th>Salidas</th>
 				<th>Saldo</th>
-				
 			</tr>
 			</thead>
 			<tbody>
