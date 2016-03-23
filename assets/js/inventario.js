@@ -313,9 +313,6 @@ $(document).on('click', '#cargar', function(e){
               $("#tabla_salidas").find('tbody').append(cadena);
             });
           if (tamcheck>0){
-              //$( this ).dialog( "close" );
-
-              //$("#tabla_articulos tbody").empty();
               $("input[name='articulo[]']:checked").attr('checked',false);
               $("#articulo_buscar").val('');
           }
@@ -323,6 +320,33 @@ $(document).on('click', '#cargar', function(e){
 
               alert('Debe seleccionar un articulo');
           }
+});
+
+/**********/
+var inputs = $(':input[type="text"]');
+$(document).on('keydown', 'input[type="text"]', function(e){
+//var inputs = $(':input').keypress(function(e){ 
+    switch(e.which) {
+        case 37: // left
+        break;
+
+        case 38: // up
+        break;
+
+        case 39: // right
+        break;
+
+        case 40: // down
+           var nextInput = inputs.get(inputs.index(document.activeElement) + 1);
+          console.log('Abajo'+nextInput);
+           //if (nextInput) {
+              nextInput.focus();
+           //}
+        break;
+
+        default: return; // exit this handler for other keys
+    }
+    e.preventDefault();
 });
 
 /**
@@ -519,9 +543,6 @@ $(document).on('change', '#num_nota_salida', function(){
                       +'<td id="unidad">'
                         +item.unidad
                       +'</td>'
-                      // +'<td id="empaque">'
-                      //   +item.empaque
-                      // +'</td>'
                       +'<td>'
                         +'<input type="text" id="cantidad" class="cantidad" placeholder="0" disabled=true value="'+number_format(item.cantidad,0)+'">'
                       +'</td>'

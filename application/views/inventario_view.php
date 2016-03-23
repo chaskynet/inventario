@@ -197,7 +197,7 @@
 <!-- ***************************************** -->
 <div class="row-fluid">
 	<?php if(in_array('chk_modifica', $this->session->userdata('permisos'))){ ?>
-		<input type="hiden" value='tiene' id="roles">
+		<input type="hidden" value='tiene' id="roles">
 	<?php } ?>
 	<h2>&nbsp;</h2>
 	<div class="span12">

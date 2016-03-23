@@ -16,10 +16,10 @@
 		<thead>
 			<tr>
 				<th>Codigo</th>
+				<th>Almacen</th>
 				<th>Descripcion</th>
 				<th>Procedencia</th>
 				<th>Unidad</th>
-				<!-- <th>Empaque</th> -->
 				<th>Cantidad</th>
 			</tr>
 		</thead>
@@ -30,6 +30,7 @@
 		?>
 		<tr>
 			<td class="centrar_texto"><?= $key->cod_articulo; ?></td>
+			<td class="centrar_texto"><?= $key->cod_almacen; ?></td>
 			<td><?= $key->descripcion; ?></td>
 			<td class="centrar_texto"><?= $key->procedencia; ?></td>
 			<td class="centrar_texto"><?= $key->unidad; ?></td>
