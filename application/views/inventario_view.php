@@ -115,11 +115,6 @@
 				<label for="inv_inicial">Inventario Inicial: </label>
 				<input type="text" id="inv_inicial">
 			</div>
-			<!-- <div class="form-group">
-				<label for="saldo">Saldo: </label>
-				<input type="text" id="ed_saldo">
-			</div> -->
-
 			<input type="submit" value="Crear Articulo" id="crear_articulo" class="btn btn-primary">
       	</div>  
       </div>
@@ -132,6 +127,42 @@
   </div>
 </div>
 <!-- ***************************************** -->
+<!-- Ventana para busqueda de articulos-->
+	<div id="modal_duplicar_articulo" class="modal fade" >
+	  <div class="modal-dialog caja">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		        <div class="col-xs-10 input-group">
+				  <span class="input-group-addon"><strong>Articulo a buscar: </strong> </span>
+				  <input type="text" class="form-control" id="duplica_articulo_buscar" autofocus>
+				</div>
+	      </div>
+	      <div class="modal-body ventana_modal" id="modal_content_busqueda">
+	        <table class="table table-hover" id="tabla_articulos">
+				<thead>
+				<tr>
+					<th>Cod. Articulo</th>
+					<th>Almacen</th>
+					<th>Descripción</th>
+					<th>Destino</th>
+					<th>Procedencia</th>
+					<th>Saldo</th>
+				</tr>
+				</thead>
+				<tbody>
+					
+				</tbody>
+			</table>
+	      </div>
+	      <div class="modal-footer">
+	      	<button id="cargar" class="btn btn-primary flotar-izquierda">Cargar Articulos</button>
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+<!-- Fin ventana Busqueda de Articulos -->
 
 <!-- Ventana Modal de Importacion de Articulos desde archivo Excel-->
 <div id="modal_importa_articulos" class="modal fade" role="dialog">
@@ -211,6 +242,9 @@
 		<?php } 
 			 if(in_array('chk_modifica', $this->session->userdata('permisos'))){ ?>
 			<a href="" id="actualizar-articulos" style="margin-left: 5%;">Actualizar</a>
+		<?php }
+			 if(in_array('chk_modifica', $this->session->userdata('permisos'))){ ?>
+			<a href="" id="duplicar-articulos" data-toggle="modal" data-target="#modal_duplicar_articulo"style="margin-left: 5%;">Duplicar</a>
 		<?php } ?>
 		<div style="float:right; margin-top: 0%;margin-right: 5%;">
 			<form id="frm_pdf_main_search_invini" name="frm_pdf_main_search_invini" action="to_pdf_search_invini" target="_blank" method="post">

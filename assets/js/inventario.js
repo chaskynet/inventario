@@ -231,9 +231,9 @@ $(function() {
 
 /**
 * Author: Jorge Anibal Zapata Agreda
-* Desc: Realiza la busqueda de articulos a traves de llamda AJAX
+* Desc: Realiza la busqueda de articulos a traves de llamada AJAX
 */
-//$(document).on('keyup', '#articulo_buscar', function(e){
+
 $(document).on('keyup', '#articulo_buscar', function(e){
 	
 		var consulta = $("#articulo_buscar").val();
@@ -260,7 +260,10 @@ $(document).on('keyup', '#articulo_buscar', function(e){
 						+item.cod_articulo
 						+'</td>'
 						+'<td>'
-						+item.descripcion
+						+item.cod_almacen
+            +'</td>'
+            +'<td>'
+            +item.descripcion
 						+'</td>'
 						+'<td class="cantidad_texto">'
 						+item.procedencia
@@ -274,6 +277,58 @@ $(document).on('keyup', '#articulo_buscar', function(e){
             }
         });
 	
+});
+
+/**
+* Author: Jorge Anibal Zapata Agreda
+* Desc: Realiza la busqueda de articulos para Duplicar a traves de llamada AJAX
+*/
+
+$(document).on('keyup', '#duplica_articulo_buscar', function(e){
+  
+    var consulta = $("#articulo_buscar").val();
+    var url = 'busca_articulo';
+    $.ajax({
+            url: url,
+            data: {data:consulta},
+            type: "POST",
+            dataType: "html",
+            error: function()
+            {
+                $("#tabla_articulos").find("tbody").empty();
+                $("#tabla_articulos").html('no hay resultados');
+            },
+            success: function(response)
+            {
+              $("#tabla_articulos").find("tbody").empty();
+              var objeto = JSON.parse(response);
+              var cadena = '';
+              $.each(objeto, function(i, item) {
+        cadena += '<tr>'
+            +'<td>'
+            +'<input type="checkbox" class="chkbox" name="articulo[]" data-cod-articulo="'+item.cod_articulo+'" data-almacen ="'+item.cod_almacen+'" data-descripcion="'+addslashes(item.descripcion)+'" data-unidad="'+item.unidad+'" data-empaque="'+item.empaque+'" data-procedencia="'+item.procedencia+'">'
+            +item.cod_articulo
+            +'</td>'
+            +'<td>'
+            +item.cod_almacen
+            +'</td>'
+            +'<td>'
+            +item.descripcion
+            +'<td>'
+            +'<select><option></option> <option>Test</option><option>urk</option></select>'
+            +'</td>'
+            +'<td class="cantidad_texto">'
+            +item.procedencia
+            +'</td>'
+            +'<td class="cantidad">'
+            +number_format(item.saldo, 0)
+            +'</td>'
+            +'</tr>';
+        })
+              $('#tabla_articulos tbody').append(cadena);
+            }
+        });
+  
 });
 
 /**
@@ -323,6 +378,8 @@ $(document).on('click', '#cargar', function(e){
 });
 
 /**********/
+/** VERIFICAR ESTA INCOMPLETO**/
+
 var inputs = $(':input[type="text"]');
 $(document).on('keydown', 'input[type="text"]', function(e){
 //var inputs = $(':input').keypress(function(e){ 

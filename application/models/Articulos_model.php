@@ -183,7 +183,13 @@ class Articulos_model extends CI_Model{
 
 	public function nuevo_articulo($datos){
 		$key = json_decode($datos);
-         $query = $this->db->query('INSERT INTO articulo (cod_articulo, cod_almacen, descripcion, unidad, empaque, procedencia, inventario_inicial, saldo, cantidad_critica, fecha) values(UPPER("'.$key->cod_articulo.'"),"'.$key->cod_almacen.'","'.addslashes($key->descripcion).'","'.$key->unidad.'","'.$key->empaque.'","'.$key->procedencia.'","'.$key->inventario_inicial.'","'.$key->inventario_inicial.'","'.$key->cantidad_critica.'", now())');
+    	$query = $this->db->query('INSERT INTO articulo (cod_articulo, cod_almacen, descripcion, unidad, empaque, procedencia, inventario_inicial, saldo, cantidad_critica, fecha) values(UPPER("'.$key->cod_articulo.'"),"'.$key->cod_almacen.'","'.addslashes($key->descripcion).'","'.$key->unidad.'","'.$key->empaque.'","'.$key->procedencia.'","'.$key->inventario_inicial.'","'.$key->inventario_inicial.'","'.$key->cantidad_critica.'", now())');
+    	
+    	// $query_almacenes = $this->db->query("SELECT abreviacion from almacen where abreviacion <> '$key->cod_almacen'");
+    	// foreach ($query_almacenes->result() as $key2) {
+    	// 	$query_clon = $this->db->query('INSERT INTO articulo (cod_articulo, cod_almacen, descripcion, unidad, empaque, procedencia, inventario_inicial, saldo, cantidad_critica, fecha) values(UPPER("'.$key->cod_articulo.'"), "'.$key2->abreviacion.'","'.addslashes($key->descripcion).'","'.$key->unidad.'","'.$key->empaque.'","'.$key->procedencia.'", 0, 0, 0, now())');
+    	// }
+
         return $query;
 	}
 

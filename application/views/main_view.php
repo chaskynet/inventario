@@ -2,9 +2,6 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<!--meta name="viewport" content="width=device-width, initial-scale=1.0"-->
-	
-	<!-- <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"> -->
 	<title>Inventario - Main</title>
 	<link rel="stylesheet" type="text/css" href="<?php echo base_url();?>assets/css/bootstrap/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="<?= base_url();?>assets/js/jquery-ui-1.11.4/jquery-ui.min.css">
@@ -12,7 +9,6 @@
 	<link rel="shortcut icon" href="<?php echo base_url();?>assets/images/favicon.ico">
 </head>
 <body>
-
 	<!-- Ventana para busqueda de articulos-->
 		<div id="modal_añadir_articulos" class="modal fade" >
 		  <div class="modal-dialog caja">
@@ -30,6 +26,7 @@
 					<thead>
 					<tr>
 						<th>Cod. Articulo</th>
+						<th>Almacen</th>
 						<th>Descripción</th>
 						<th>Procedencia</th>
 						<th>Saldo</th>
@@ -63,7 +60,6 @@
 			</button>
 			<div class="collapse navbar-collapse navHeaderCollapse">
 				<ul class="nav navbar-nav navbar-right">
-					
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Inventario <b class="caret"></b></a>
 						<ul class="dropdown-menu">
@@ -77,17 +73,11 @@
 								<li><a href="#" id="salida-productos">Salida de Productos</a></li>
 							<?php } if(in_array('chk_lst_conteo', $permiso)){ ?>
 								<li><a href="#" id="rep-para-conteo">Lista Para conteo fisico</a></li>
-							
 							<?php } if(in_array('chk_mov_inventa', $permiso)){ ?>
 								<li><a href="#" id="rep-mov-inv">Movimiento de inventarios</a></li>
 							<?php }?>
 						</ul>
 					</li>
-					<!-- <li class="dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Reportes <b class="caret"></b></a>
-						<ul class="dropdown-menu">
-						</ul>
-					</li> -->
 					<?php if(in_array('chk_config', $permiso)){ ?>
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Configuraciones <b class="caret"></b></a>
